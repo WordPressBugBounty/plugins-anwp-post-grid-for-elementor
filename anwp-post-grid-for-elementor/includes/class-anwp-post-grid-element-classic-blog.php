@@ -1,11 +1,9 @@
 <?php
 
 use Elementor\Controls_Manager;
-use Elementor\Controls_Stack;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Typography;
 use Elementor\Widget_Base;
-use Elementor\Core\Schemes;
 use Elementor\Group_Control_Border;
 use Elementor\Icons_Manager;
 

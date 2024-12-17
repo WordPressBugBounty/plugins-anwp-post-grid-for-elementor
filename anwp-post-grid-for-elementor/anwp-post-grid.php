@@ -3,14 +3,14 @@
  * Plugin Name: AnWP Post Grid and Post Carousel Slider for Elementor
  * Plugin URI:  https://anwppro.userecho.com/communities/50-anwp-post-grid-for-elementor
  * Description: Easily create awesome post grids and post carousel sliders. Different widget types, powerful filters, "load more" button and many customizable options.
- * Version:     1.3.0
+ * Version:     1.3.1
  * Author:      Andrei Strekozov <anwppro>
  * Author URI:  https://anwp.pro
  * License:     GPLv2+
  * Requires PHP: 5.6
  * Text Domain: anwp-post-grid
  * Domain Path: /languages
- * Elementor tested up to: 3.21
+ * Elementor tested up to: 3.26
  */
 
 /**

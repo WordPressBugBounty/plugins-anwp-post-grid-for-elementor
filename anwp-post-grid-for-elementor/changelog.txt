@@ -1,5 +1,8 @@
 == Changelog ==
 
+= 1.3.1 - 2024-12-17 =
+* fixed: Schemes\Typography error in Elementor 3.26
+
 = 1.3.0 - 2024-05-16 =
 * changed: increased the minimal Elementor version to 3.5.0
 * added: new option "Border" (style, color, width) in all widgets

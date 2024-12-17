@@ -4,7 +4,7 @@ use Elementor\Group_Control_Typography;
 use Elementor\Plugin;
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
-use Elementor\Core\Schemes;
+use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 
 /**
  * Elementor Items (Elements)
@@ -2371,8 +2371,10 @@ class AnWP_Post_Grid_Elements {
 			Group_Control_Typography::get_type(),
 			[
 				'name'     => 'typography',
-				'scheme'   => Schemes\Typography::TYPOGRAPHY_1,
 				'selector' => '{{WRAPPER}} .anwp-pg-widget-header__title',
+				'global'   => [
+					'default' => Global_Typography::TYPOGRAPHY_PRIMARY,
+				],
 			]
 		);
 
