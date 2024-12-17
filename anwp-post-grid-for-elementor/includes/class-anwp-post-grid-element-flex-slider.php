@@ -29,6 +29,15 @@ class AnWP_Post_Grid_Element_Flex_Slider extends Widget_Base {
 	}
 
 	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 */
+	public function get_style_depends() {
+		return [ 'e-swiper' ];
+	}
+
+	/**
 	 * Get widget title.
 	 *
 	 * @return string Widget title.

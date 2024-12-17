@@ -5,7 +5,7 @@ Tags:              post grid, post slider, post carousel, posts grid, elementor,
 Requires at least: 5.3
 Requires PHP:      5.6
 Tested up to:      6.7
-Stable tag:        1.3.1
+Stable tag:        1.3.2
 License:           GPLv2 or later
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -90,6 +90,9 @@ Click on "Edit Sections" icon. Then set "Columns Gap" option to "No Gap".
 
 
 == Changelog ==
+
+= 1.3.2 - 2024-12-17 =
+* fixed: slider problem in Elementor 3.26
 
 = 1.3.1 - 2024-12-17 =
 * fixed: Schemes\Typography error in Elementor 3.26

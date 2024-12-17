@@ -47,7 +47,7 @@ final class AnWP_Post_Grid {
 	 * @var    string
 	 * @since  0.1.0
 	 */
-	const VERSION = '1.3.1';
+	const VERSION = '1.3.2';
 
 	/**
 	 * URL of plugin directory.

@@ -66,6 +66,15 @@ class AnWP_Post_Grid_Element_Classic_Slider extends Widget_Base {
 	}
 
 	/**
+	 * Get style dependencies.
+	 *
+	 * Retrieve the list of style dependencies the widget requires.
+	 */
+	public function get_style_depends() {
+		return [ 'e-swiper' ];
+	}
+
+	/**
 	 * Get widget categories.
 	 *
 	 * Retrieve the list of categories the oEmbed widget belongs to.
