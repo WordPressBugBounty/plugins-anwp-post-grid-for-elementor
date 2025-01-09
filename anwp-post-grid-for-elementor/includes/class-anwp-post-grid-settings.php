@@ -85,6 +85,11 @@ class AnWP_Post_Grid_Settings {
 			<input name="_anwp_pg_category_color" value="" class="anwp-pg-colorpicker" id="anwp-pg-term-colorpicker"/>
 			<p><small><?php echo esc_html__( 'If you don\'t need this field, hide it in the AnWP Post Grid plugin Settings.', 'anwp-post-grid' ); ?></small></p>
 		</div>
+		<div class="form-field term-colorpicker-wrap">
+			<label for="anwp-pg-term-text-colorpicker"><?php echo esc_html__( 'Category Text Color to use in AnWP Post Grid widgets', 'anwp-post-grid' ); ?></label>
+			<input name="_anwp_pg_category_text_color" value="" class="anwp-pg-colorpicker" id="anwp-pg-term-text-colorpicker"/>
+			<p><small><?php echo esc_html__( 'If you don\'t need this field, hide it in the AnWP Post Grid plugin Settings.', 'anwp-post-grid' ); ?></small></p>
+		</div>
 		<?php
 	}
 
@@ -104,6 +109,9 @@ class AnWP_Post_Grid_Settings {
 
 		$color = get_term_meta( $term->term_id, '_anwp_pg_category_color', true );
 		$color = empty( $color ) ? '' : "#{$color}";
+
+		$text_color = get_term_meta( $term->term_id, '_anwp_pg_category_text_color', true );
+		$text_color = empty( $text_color ) ? '' : "#{$text_color}";
 		?>
 		<tr class="form-field term-colorpicker-wrap">
 			<th scope="row">
@@ -111,6 +119,15 @@ class AnWP_Post_Grid_Settings {
 			</th>
 			<td>
 				<input name="_anwp_pg_category_color" value="<?php echo esc_html( $color ); ?>" class="anwp-pg-colorpicker" id="anwp-pg-term-colorpicker"/>
+				<p><small><?php echo esc_html__( 'If you don\'t need this field, hide it in the AnWP Post Grid plugin Settings.', 'anwp-post-grid' ); ?></small></p>
+			</td>
+		</tr>
+		<tr class="form-field term-colorpicker-wrap">
+			<th scope="row">
+				<label for="anwp-pg-term-text-colorpicker"><?php echo esc_html__( 'Category Text Color to use in AnWP Post Grid widgets', 'anwp-post-grid' ); ?></label>
+			</th>
+			<td>
+				<input name="_anwp_pg_category_text_color" value="<?php echo esc_html( $text_color ); ?>" class="anwp-pg-colorpicker" id="anwp-pg-term-text-colorpicker"/>
 				<p><small><?php echo esc_html__( 'If you don\'t need this field, hide it in the AnWP Post Grid plugin Settings.', 'anwp-post-grid' ); ?></small></p>
 			</td>
 		</tr>
@@ -158,10 +175,17 @@ class AnWP_Post_Grid_Settings {
 		}
 
 		// Save term color if possible
-		if ( isset( $_POST['_anwp_pg_category_color'] ) && ! empty( $_POST['_anwp_pg_category_color'] ) ) {
+		if ( ! empty( $_POST['_anwp_pg_category_color'] ) ) {
 			update_term_meta( $term_id, '_anwp_pg_category_color', sanitize_hex_color_no_hash( $_POST['_anwp_pg_category_color'] ) );
 		} else {
 			delete_term_meta( $term_id, '_anwp_pg_category_color' );
+		}
+
+		// Save term color if possible
+		if ( ! empty( $_POST['_anwp_pg_category_text_color'] ) ) {
+			update_term_meta( $term_id, '_anwp_pg_category_text_color', sanitize_hex_color_no_hash( $_POST['_anwp_pg_category_text_color'] ) );
+		} else {
+			delete_term_meta( $term_id, '_anwp_pg_category_text_color' );
 		}
 	}
 

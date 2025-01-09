@@ -1417,7 +1417,14 @@ class AnWP_Post_Grid_Elements {
 			$category_color = empty( $category_color ) ? '#1565C0' : $category_color;
 		}
 
-		echo '<div class="anwp-pg-category__wrapper-filled px-2 d-flex align-items-center ' . esc_attr( $class ) . ' anwp-pg-category-parent-' . esc_attr( $term_obj->parent ) . '" style="background-color: ' . esc_attr( $category_color ) . '">';
+		$style_value = 'background-color: ' . $category_color;
+
+		if ( 'no' !== AnWP_Post_Grid_Settings::get_value( 'show_category_color' ) && get_term_meta( $term_obj->term_id, '_anwp_pg_category_text_color', true ) ) {
+			$text_color   = get_term_meta( $term_obj->term_id, '_anwp_pg_category_text_color', true );
+			$style_value .= ';color: #' . $text_color;
+		}
+
+		echo '<div class="anwp-pg-category__wrapper-filled px-2 d-flex align-items-center ' . esc_attr( $class ) . ' anwp-pg-category-parent-' . esc_attr( $term_obj->parent ) . '" style="' . esc_attr( $style_value ) . '">';
 		echo '<span>' . esc_html( $term_obj->name ) . '</span>';
 		echo '</div>';
 	}
@@ -1453,8 +1460,14 @@ class AnWP_Post_Grid_Elements {
 		}
 
 		$category_color = empty( $category_color ) ? '#1565C0' : $category_color;
+		$style_value    = 'color: ' . $category_color;
 
-		echo '<div class="anwp-pg-category__wrapper d-flex align-items-center ' . esc_attr( $class ) . ' anwp-pg-category-parent-' . esc_attr( $term_obj->parent ) . '" style="color: ' . esc_attr( $category_color ) . '">';
+		if ( 'no' !== AnWP_Post_Grid_Settings::get_value( 'show_category_color' ) && get_term_meta( $term_obj->term_id, '_anwp_pg_category_text_color', true ) ) {
+			$text_color  = get_term_meta( $term_obj->term_id, '_anwp_pg_category_text_color', true );
+			$style_value = ';color: #' . $text_color;
+		}
+
+		echo '<div class="anwp-pg-category__wrapper d-flex align-items-center ' . esc_attr( $class ) . ' anwp-pg-category-parent-' . esc_attr( $term_obj->parent ) . '" style="' . esc_attr( $style_value ) . '">';
 		echo esc_html( $term_obj->name );
 		echo '</div>';
 	}
