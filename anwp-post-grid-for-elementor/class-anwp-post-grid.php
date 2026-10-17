@@ -47,7 +47,7 @@ final class AnWP_Post_Grid {
 	 * @var    string
 	 * @since  0.1.0
 	 */
-	const VERSION = '1.3.3';
+	const VERSION = '1.3.4';
 
 	/**
 	 * URL of plugin directory.
@@ -104,6 +104,21 @@ final class AnWP_Post_Grid {
 	 * @var AnWP_Post_Grid_Elements
 	 */
 	protected $elements;
+
+	/**
+	 * Instance of AnWP_Post_Grid_REST
+	 *
+	 * Public (not protected like the other services) because the premium REST
+	 * controller reads it across the plugin boundary via anwp_post_grid()->rest
+	 * and guards on isset( anwp_post_grid()->rest ). A protected property would
+	 * make that isset() return false (no __isset magic method defined).
+	 * Declared to avoid the PHP 8.2+ dynamic-property deprecation, which with
+	 * display_errors on leaks HTML into Elementor editor JSON responses.
+	 *
+	 * @since 1.3.4
+	 * @var AnWP_Post_Grid_REST
+	 */
+	public $rest;
 
 	/**
 	 * Creates or returns an instance of this class.
@@ -332,6 +347,9 @@ final class AnWP_Post_Grid {
 		$this->template = new AnWP_Post_Grid_Template( $this );
 		$this->elements = new AnWP_Post_Grid_Elements( $this );
 
+		// REST API
+		$this->rest = new AnWP_Post_Grid_REST( $this );
+
 	} // END OF PLUGIN CLASSES FUNCTION
 
 	/**
@@ -406,10 +424,9 @@ final class AnWP_Post_Grid {
 			'anwp-pg-scripts',
 			'anwpPostGridElementorData',
 			[
-				'ajax_url'       => admin_url( 'admin-ajax.php' ),
-				'public_nonce'   => wp_create_nonce( 'anwp-pg-public-nonce' ),
 				'premium_active' => self::is_premium_active() ? 'yes' : '',
 				'loader'         => includes_url( 'js/tinymce/skins/lightgray/img/loader.gif' ),
+				'rest_url'       => esc_url_raw( rest_url() ), // Public routes are nonce-less: a cached page's nonce expires and would 403 anonymous visitors.
 			]
 		);
 	}

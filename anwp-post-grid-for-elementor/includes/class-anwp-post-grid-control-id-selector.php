@@ -59,8 +59,9 @@ class AnWP_Post_Grid_Control_Id_Selector extends Base_Data_Control {
 			'anwp-id-selector',
 			'anwp_PG_ID_Selector',
 			[
-				'ajaxNonce'    => wp_create_nonce( 'ajax_anwp_pg_nonce' ),
 				'selectorHtml' => $this->include_selector_modaal(),
+				'restUrl'      => esc_url_raw( rest_url() ),
+				'restNonce'    => wp_create_nonce( 'wp_rest' ),
 			]
 		);
 	}

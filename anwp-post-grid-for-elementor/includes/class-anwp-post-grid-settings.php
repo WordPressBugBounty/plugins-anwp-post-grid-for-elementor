@@ -65,7 +65,6 @@ class AnWP_Post_Grid_Settings {
 		|--------------------------------------------------------------------
 		*/
 		add_action( 'admin_enqueue_scripts', [ $this, 'settings_enqueue_scripts' ] );
-		add_action( 'wp_ajax_anwp_pg_save_options', [ $this, 'save_options' ] );
 	}
 
 	/**
@@ -170,23 +169,33 @@ class AnWP_Post_Grid_Settings {
 	 */
 	public function save_category_colorpicker( $term_id ) {
 
+		// Defense-in-depth: the created_category/edited_category hooks already run behind WP core's capability + nonce gate.
+		if ( ! current_user_can( 'manage_categories' ) ) {
+			return;
+		}
+
 		if ( 'no' === self::get_value( 'show_category_color' ) ) {
 			return;
 		}
 
+		// WP core verifies the category-screen nonce before created_category/edited_category fire; values are re-checked + sanitized below.
+		// phpcs:disable WordPress.Security.NonceVerification.Missing
+
 		// Save term color if possible
 		if ( ! empty( $_POST['_anwp_pg_category_color'] ) ) {
-			update_term_meta( $term_id, '_anwp_pg_category_color', sanitize_hex_color_no_hash( $_POST['_anwp_pg_category_color'] ) );
+			update_term_meta( $term_id, '_anwp_pg_category_color', sanitize_hex_color_no_hash( wp_unslash( $_POST['_anwp_pg_category_color'] ) ) );
 		} else {
 			delete_term_meta( $term_id, '_anwp_pg_category_color' );
 		}
 
 		// Save term color if possible
 		if ( ! empty( $_POST['_anwp_pg_category_text_color'] ) ) {
-			update_term_meta( $term_id, '_anwp_pg_category_text_color', sanitize_hex_color_no_hash( $_POST['_anwp_pg_category_text_color'] ) );
+			update_term_meta( $term_id, '_anwp_pg_category_text_color', sanitize_hex_color_no_hash( wp_unslash( $_POST['_anwp_pg_category_text_color'] ) ) );
 		} else {
 			delete_term_meta( $term_id, '_anwp_pg_category_text_color' );
 		}
+
+		// phpcs:enable WordPress.Security.NonceVerification.Missing
 	}
 
 	/**
@@ -238,39 +247,13 @@ class AnWP_Post_Grid_Settings {
 
 		/*
 		|--------------------------------------------------------------------------
-		| Vue.js
-		|--------------------------------------------------------------------------
-		*/
-		$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
-		wp_enqueue_script( 'vuejs', AnWP_Post_Grid::url( 'vendor/vuejs/vue' . $suffix . '.js' ), [], '2.6.12', true );
-
-		/*
-		|--------------------------------------------------------------------------
-		| Toastr
+		| Admin App (Vue 3, bundled via Vite)
 		|
-		| @license  MIT
-		| @link     https://github.com/CodeSeven/toastr
+		| Component styles are bundled into the JS and injected at runtime, so no
+		| separate stylesheet is enqueued for the app.
 		|--------------------------------------------------------------------------
 		*/
-		wp_enqueue_script( 'toastr', AnWP_Post_Grid::url( 'vendor/toastr/toastr.min.js' ), [], '2.1.4', false );
-		wp_enqueue_style( 'toastr', AnWP_Post_Grid::url( 'vendor/toastr/toastr.min.css' ), [], '2.1.4', false );
-
-		/*
-		|--------------------------------------------------------------------------
-		| Modaal
-		|
-		| @license  MIT
-		| @link     https://github.com/humaan/Modaal
-		|--------------------------------------------------------------------------
-		*/
-		wp_enqueue_script( 'modaal', AnWP_Post_Grid::url( 'vendor/modaal/modaal.min.js' ), [ 'jquery' ], '0.4.0', false );
-
-		/*
-		|--------------------------------------------------------------------------
-		| Plugin Scripts
-		|--------------------------------------------------------------------------
-		*/
-		wp_enqueue_script( 'anwp-pg-admin-vue-script', AnWP_Post_Grid::url( 'admin/js/pg-premium-admin-vue.min.js' ), [ 'vuejs', 'jquery', 'underscore', 'toastr' ], AnWP_Post_Grid::VERSION, true );
+		wp_enqueue_script( 'anwp-pg-admin-vue-script', AnWP_Post_Grid::url( 'admin/js/pg-premium-admin-vue.min.js' ), [], AnWP_Post_Grid::VERSION, true );
 
 		/*
 		|--------------------------------------------------------------------------
@@ -374,43 +357,6 @@ class AnWP_Post_Grid_Settings {
 		$sanitized_options['cpt_support']            = empty( $options['cpt_support'] ) ? [] : $this->recursive_sanitize( $options['cpt_support'] );
 
 		return $sanitized_options;
-	}
-
-	/**
-	 * Save Options Data
-	 *
-	 * @since 0.8.0
-	 */
-	public function save_options() {
-
-		// Check if our nonce is set.
-		if ( ! isset( $_POST['nonce'] ) ) {
-			wp_send_json_error( 'Error : Unauthorized action' );
-		}
-
-		// Verify that the nonce is valid.
-		if ( ! wp_verify_nonce( $_POST['nonce'], 'ajax_anwp_pg_admin_nonce' ) ) {
-			wp_send_json_error( 'Error : Unauthorized action' );
-		}
-
-		// Check the user's permissions.
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_send_json_error( 'Error : Unauthorized action' );
-		}
-
-		$post_data      = wp_unslash( $_POST );
-		$old_value      = get_option( 'anwp_pg_plugin_settings', [] );
-		$plugin_options = isset( $post_data['pg_options'] ) ? $this->sanitize_options( $post_data['pg_options'] ) : [];
-
-		if ( $plugin_options === $old_value || maybe_serialize( $plugin_options ) === maybe_serialize( $old_value ) ) {
-			wp_send_json_error( 'Nothing to Update' );
-		}
-
-		if ( ! update_option( 'anwp_pg_plugin_settings', $plugin_options, true ) ) {
-			wp_send_json_error( 'Error : Update Problem' );
-		}
-
-		wp_send_json_success();
 	}
 
 	/**

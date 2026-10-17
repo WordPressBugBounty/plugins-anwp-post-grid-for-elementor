@@ -365,7 +365,7 @@ class AnWP_Post_Grid_Element_Flex_Slider extends Widget_Base {
 				'default'   => '',
 				'alpha'     => false,
 				'selectors' => [
-					'{{WRAPPER}} .anwp-pg-simple-slider .anwp-pg-category__wrapper-filled' => 'background-color: {{VALUE}} !important',
+					'{{WRAPPER}} .anwp-pg-flex-slider .anwp-pg-category__wrapper-filled' => 'background-color: {{VALUE}} !important',
 				],
 			]
 		);
@@ -378,7 +378,7 @@ class AnWP_Post_Grid_Element_Flex_Slider extends Widget_Base {
 				'default'   => '',
 				'alpha'     => false,
 				'selectors' => [
-					'{{WRAPPER}} .anwp-pg-simple-slider .anwp-pg-category__wrapper-filled' => 'color: {{VALUE}} !important',
+					'{{WRAPPER}} .anwp-pg-flex-slider .anwp-pg-category__wrapper-filled' => 'color: {{VALUE}} !important',
 				],
 			]
 		);

@@ -4,8 +4,8 @@ Donate link:       https://anwp.pro
 Tags:              post grid, post slider, post carousel, posts grid, elementor, elementor addons, elementor widget, elementor page builder, grid, load more
 Requires at least: 5.3
 Requires PHP:      5.6
-Tested up to:      6.7
-Stable tag:        1.3.3
+Tested up to:      7.1
+Stable tag:        1.3.4
 License:           GPLv2 or later
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,6 +80,10 @@ Yes! The plugin works with most themes out of the box. If you have any CSS styli
 
 Click on "Edit Sections" icon. Then set "Columns Gap" option to "No Gap".
 
+= "Load more", pagination or the header filter don't work for visitors =
+
+These features load posts through the WordPress REST API, under the `anwp-pg/v1` namespace, and they don't need the visitor to be logged in. Some security plugins block the REST API for logged-out visitors. If yours does, add `anwp-pg/v1` to its list of allowed REST routes (often called "whitelist", "allowlist" or "exceptions").
+
 == Screenshots ==
 
 1. Simple Grid Layout
@@ -90,6 +94,12 @@ Click on "Edit Sections" icon. Then set "Columns Gap" option to "No Gap".
 
 
 == Changelog ==
+
+= 1.3.4 - 2026-10-17 =
+* important: if you use AnWP Post Grid Premium, update it to 1.0.5 at the same time - older Premium versions lose "load more" and pagination in Premium widgets
+* improved: security and stability hardening
+* improved: code quality and performance
+* fixed: category background and text colors had no effect in Flex Slider
 
 = 1.3.3 - 2025-01-09 =
 * added: option to change Category Text color used in AnWP Grid widget

@@ -94,23 +94,22 @@ window.anwpPostGridElementor = {};
 			$this.prop( 'disabled', true );
 
 			$.ajax( {
-				url: l10n.ajax_url,
+				url: l10n.rest_url + 'anwp-pg/v1/posts/load-more',
 				type: 'POST',
 				dataType: 'json',
-				data: {
-					action: 'anwp_pg_load_more_posts',
+				contentType: 'application/json',
+				data: JSON.stringify( {
 					args: $this.data( 'anwp-load-more' ),
 					loaded: $this.data( 'anwp-loaded-qty' ),
-					qty: $this.data( 'anwp-posts-per-load' ),
-					_ajax_nonce: l10n.public_nonce
-				}
+					qty: $this.data( 'anwp-posts-per-load' )
+				} )
 			} ).done( function( response ) {
-				if ( response.success ) {
+				if ( response ) {
 
-					$( response.data.html ).appendTo( $this.closest( '.anwp-pg-wrap' ).find( '.anwp-pg-posts-wrapper' ) );
-					$this.data( 'anwp-loaded-qty', response.data.offset );
+					$( response.html ).appendTo( $this.closest( '.anwp-pg-wrap' ).find( '.anwp-pg-posts-wrapper' ) );
+					$this.data( 'anwp-loaded-qty', response.offset );
 
-					if ( ! response.data.next ) {
+					if ( ! response.next ) {
 						$this.closest( '.anwp-pg-load-more' ).remove();
 					}
 
@@ -324,19 +323,18 @@ window.anwpPostGridElementor = {};
 				}
 
 				$xhr = $.ajax( {
-					url: l10n.ajax_url,
+					url: l10n.rest_url + 'anwp-pg/v1/posts/paginate',
 					type: 'POST',
 					dataType: 'json',
-					data: {
-						action: 'anwp_pg_ajax_pagination_load',
+					contentType: 'application/json',
+					data: JSON.stringify( {
 						args: $wrapper.data( 'anwp-pagination' ),
-						page: options.current_page,
-						_ajax_nonce: l10n.public_nonce
-					}
+						page: options.current_page
+					} )
 				} ).done( function( response ) {
-					if ( response.success && response.data.html ) {
+					if ( response && response.html ) {
 
-						$postsWrapper.html( response.data.html );
+						$postsWrapper.html( response.html );
 
 						$( document.body ).trigger( 'post-load' );
 						$( document ).trigger( 'resize' );

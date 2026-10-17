@@ -1,5 +1,11 @@
 == Changelog ==
 
+= 1.3.4 - 2026-10-17 =
+* important: if you use AnWP Post Grid Premium, update it to 1.0.5 at the same time - older Premium versions lose "load more" and pagination in Premium widgets
+* improved: security and stability hardening
+* improved: code quality and performance
+* fixed: category background and text colors had no effect in Flex Slider
+
 = 1.3.3 - 2025-01-09 =
 * added: option to change Category Text color used in AnWP Grid widget
 

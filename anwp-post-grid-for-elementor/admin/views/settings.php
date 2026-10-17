@@ -31,7 +31,8 @@ $settings_text = [
 	'save_options'       => esc_html__( 'Save Options', 'anwp-post-grid' ),
 	'saved_successfully' => esc_html__( 'Saved Successfully', 'anwp-post-grid' ),
 	'remove_image'       => esc_html__( 'remove image', 'anwp-post-grid' ),
-	'ajaxNonce'          => wp_create_nonce( 'ajax_anwp_pg_admin_nonce' ),
+	'restUrl'            => esc_url_raw( rest_url() ),
+	'restNonce'          => wp_create_nonce( 'wp_rest' ),
 ];
 
 // Fields Data
@@ -167,10 +168,21 @@ if ( current_theme_supports( 'post-formats' ) ) {
 	var _anwp_pg_cpt_options     = <?php echo wp_json_encode( anwp_post_grid()->settings->get_post_type_options() ); ?>;
 </script>
 <div class="wrap anwp-pg-wrap">
-	<div class="postbox mt-4 ml-1 py-3 px-4 anwp-container">
-		<h1 class="mb-5"><?php echo esc_html__( 'AnWP Post Grid Settings', 'anwp-post-grid' ); ?></h1>
-		<hr class="mb-0">
+	<h1 class="wp-heading-inline"><?php echo esc_html__( 'AnWP Post Grid Settings', 'anwp-post-grid' ); ?></h1>
+	<a
+		href="https://anwppro.userecho.com/en/knowledge-bases/51/articles/1053-plugin-settings"
+		target="_blank"
+		rel="noopener"
+		title="<?php esc_attr_e( 'View documentation', 'anwp-post-grid' ); ?>"
+		style="display:inline-block;width:22px;height:22px;margin:6px 0 0 6px;border:1px solid #d9d9d9;border-radius:50%;background:#fff;color:#717171;font-size:13px;line-height:20px;text-align:center;text-decoration:none;vertical-align:top;"
+	>?</a>
+	<hr class="wp-header-end">
 
+	<p style="max-width:980px;margin:4px 0 16px;color:#646970;font-size:14px;">
+		<?php echo esc_html__( 'Global options for the Post Grid widgets - category colors, default featured image, custom post types, and post icons.', 'anwp-post-grid' ); ?>
+	</p>
+
+	<div class="postbox anwp-container" style="max-width:980px;margin:0;padding:8px 24px 24px;">
 		<div id="<?php echo esc_attr( $app_id ); ?>"></div>
 	</div>
 

@@ -73,18 +73,8 @@ class AnWP_Post_Grid_Elements {
 			add_action( 'elementor/widgets/widgets_registered', [ $this, 'init_widgets' ] );
 		}
 
-		// Controls
-		add_action( 'wp_ajax_anwp_pg_selector_data', [ $this, 'get_selector_data' ] );
-		add_action( 'wp_ajax_anwp_pg_selector_initial', [ $this, 'get_selector_initial' ] );
-
 		// Add Plugin actions
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'promote_premium_widgets' ] );
-
-		add_action( 'wp_ajax_nopriv_anwp_pg_load_more_posts', [ $this, 'ajax_load_more' ] );
-		add_action( 'wp_ajax_anwp_pg_load_more_posts', [ $this, 'ajax_load_more' ] );
-
-		add_action( 'wp_ajax_nopriv_anwp_pg_ajax_pagination_load', [ $this, 'ajax_pagination_load' ] );
-		add_action( 'wp_ajax_anwp_pg_ajax_pagination_load', [ $this, 'ajax_pagination_load' ] );
 
 		// Add premium prove at the end of all pages
 		add_action( 'anwp-pg-el/element/before_controls_end', [ $this, 'load_promo_tab' ] );
@@ -95,117 +85,68 @@ class AnWP_Post_Grid_Elements {
 	}
 
 	/**
-	 * Get Instance Selector Data
+	 * Build selector search HTML for a given context.
 	 *
-	 * @since 0.8.3
+	 * Shared by the legacy AJAX handler and the REST controller.
+	 *
+	 * @param string $context One of: tags, categories, posts, authors.
+	 * @param string $search  Search string.
+	 *
+	 * @return string
+	 * @since 1.3.4
 	 */
-	public function get_selector_data() {
+	public function get_selector_search_html( $context, $search ) {
 
-		// Check if our nonce is set.
-		if ( ! isset( $_POST['nonce'] ) ) {
-			wp_send_json_error( 'Error : Unauthorized action' );
-		}
-
-		// Verify that the nonce is valid.
-		if ( ! wp_verify_nonce( $_POST['nonce'], 'ajax_anwp_pg_nonce' ) ) {
-			wp_send_json_error( 'Error : Unauthorized action' );
-		}
-
-		// Check the user's permissions.
-		if ( ! current_user_can( 'edit_others_posts' ) ) {
-			wp_send_json_error( 'Error : Unauthorized action' );
-		}
-
-		// Get POST search data
 		$search_data = [
-			'context' => $_POST['context'] ? sanitize_text_field( $_POST['context'] ) : '',
-			's'       => isset( $_POST['s'] ) ? sanitize_text_field( $_POST['s'] ) : '',
+			'context' => sanitize_text_field( $context ),
+			's'       => sanitize_text_field( $search ),
 		];
-
-		if ( ! in_array( $search_data['context'], [ 'tags', 'categories', 'posts', 'authors' ], true ) ) {
-			wp_send_json_error();
-		}
-
-		$html_output = '';
 
 		switch ( $search_data['context'] ) {
 			case 'tags':
-				$html_output = $this->get_selector_tags_data( $search_data );
-				break;
+				return $this->get_selector_tags_data( $search_data );
 
 			case 'categories':
-				$html_output = $this->get_selector_categories_data( $search_data );
-				break;
+				return $this->get_selector_categories_data( $search_data );
 
 			case 'authors':
-				$html_output = $this->get_selector_authors_data( $search_data );
-				break;
+				return $this->get_selector_authors_data( $search_data );
 
 			case 'posts':
-				$html_output = $this->get_selector_posts_data( $search_data );
-				break;
+				return $this->get_selector_posts_data( $search_data );
 		}
 
-		wp_send_json_success( [ 'html' => $html_output ] );
+		return '';
 	}
 
 	/**
-	 * Get Instance Selector Data
+	 * Build selector "initial" items for a given context.
 	 *
-	 * @since 0.8.3
+	 * Shared by the legacy AJAX handler and the REST controller.
+	 *
+	 * @param string $context      One of: tags, categories, posts, authors.
+	 * @param array  $data_initial Array of IDs.
+	 *
+	 * @return mixed
+	 * @since 1.3.4
 	 */
-	public function get_selector_initial() {
+	public function get_selector_initial_items( $context, $data_initial ) {
 
-		// Check if our nonce is set.
-		if ( ! isset( $_POST['nonce'] ) ) {
-			wp_send_json_error( 'Error : Unauthorized action' );
-		}
-
-		// Verify that the nonce is valid.
-		if ( ! wp_verify_nonce( $_POST['nonce'], 'ajax_anwp_pg_nonce' ) ) {
-			wp_send_json_error( 'Error : Unauthorized action' );
-		}
-
-		// Check the user's permissions.
-		if ( ! current_user_can( 'edit_others_posts' ) ) {
-			wp_send_json_error( 'Error : Unauthorized action' );
-		}
-
-		// Get context
-		$data_context = isset( $_POST['data_context'] ) ? sanitize_text_field( $_POST['data_context'] ) : '';
-
-		if ( ! in_array( $data_context, [ 'tags', 'categories', 'posts', 'authors' ], true ) ) {
-			wp_send_json_error();
-		}
-
-		// Initial
-		$data_initial = isset( $_POST['initial'] ) ? wp_parse_id_list( $_POST['initial'] ) : [];
-
-		if ( empty( $data_initial ) ) {
-			wp_send_json_error();
-		}
-
-		$output = '';
-
-		switch ( $data_context ) {
+		switch ( sanitize_text_field( $context ) ) {
 			case 'tags':
-				$output = $this->get_selector_tags_initial( $data_initial );
-				break;
+				return $this->get_selector_tags_initial( $data_initial );
 
 			case 'categories':
-				$output = $this->get_selector_categories_initial( $data_initial );
-				break;
+				return $this->get_selector_categories_initial( $data_initial );
 
 			case 'authors':
-				$output = $this->get_selector_authors_initial( $data_initial );
-				break;
+				return $this->get_selector_authors_initial( $data_initial );
 
 			case 'posts':
-				$output = $this->get_selector_posts_initial( $data_initial );
-				break;
+				return $this->get_selector_posts_initial( $data_initial );
 		}
 
-		wp_send_json_success( [ 'items' => $output ] );
+		return [];
 	}
 
 	/**
@@ -1612,289 +1553,6 @@ class AnWP_Post_Grid_Elements {
 		);
 
 		return wp_json_encode( $output );
-	}
-
-	/**
-	 * Handle ajax request and provide posts to load.
-	 *
-	 * @since 0.5.2
-	 */
-	public function ajax_load_more() {
-
-		// Activate referer check with hook (optional)
-		if ( apply_filters( 'anwp-pg-el/config/check_public_nonce', false ) ) {
-			check_ajax_referer( 'anwp-pg-public-nonce' );
-		}
-
-		$post_loaded = absint( $_POST['loaded'] );
-		$post_qty    = absint( $_POST['qty'] );
-
-		// Parse with default values
-		$args = wp_parse_args(
-			wp_unslash( $_POST['args'] ),
-			[
-				'layout'                 => '',
-				'posts_to_show'          => 'latest',
-				'include_ids'            => '',
-				'exclude_ids'            => '',
-				'exclude_by_category'    => '',
-				'filter_by_category'     => '',
-				'filter_by_tag'          => '',
-				'filter_by_post_format'  => '',
-				'filter_by_author'       => '',
-				'published_in_last_days' => 0,
-				'limit'                  => 3,
-				'offset'                 => 0,
-				'grid_cols'              => 3,
-				'grid_cols_tablet'       => 2,
-				'grid_cols_mobile'       => 1,
-				'category_limit'         => 1,
-				'grid_thumbnail_size'    => 'large',
-				'show_category'          => 'yes',
-				'show_date'              => 'yes',
-				'show_comments'          => 'yes',
-				'card_height'            => '180',
-				'show_excerpt'           => 'yes',
-				'excerpt_num_words'      => '',
-				'excerpt_source'         => '',
-				'excerpt_html'           => '',
-				'post_image_width'       => '1_3',
-				'show_post_icon'         => 'yes',
-				'grid_post'              => (object) [],
-				'query_source'           => '',
-				'related_posts'          => '',
-				'related_posts_order'    => '',
-				'related_post_id'        => '',
-				'card_height_mobile'     => '',
-				'card_height_tablet'     => '',
-				'labels_by_c_tax'        => '',
-				'filter_by_c_tax'        => '',
-			]
-		);
-
-		// Sanitize and validate
-		$data = [
-			'posts_to_show'          => sanitize_text_field( $args['posts_to_show'] ),
-			'include_ids'            => wp_parse_id_list( $args['include_ids'] ),
-			'exclude_ids'            => wp_parse_id_list( $args['exclude_ids'] ),
-			'filter_by_category'     => wp_parse_id_list( $args['filter_by_category'] ),
-			'exclude_by_category'    => wp_parse_id_list( $args['exclude_by_category'] ),
-			'filter_by_tag'          => wp_parse_id_list( $args['filter_by_tag'] ),
-			'filter_by_post_format'  => sanitize_text_field( $args['filter_by_post_format'] ),
-			'filter_by_author'       => wp_parse_id_list( $args['filter_by_author'] ),
-			'published_in_last_days' => absint( $args['published_in_last_days'] ),
-			'category_limit'         => absint( $args['category_limit'] ),
-			'grid_cols'              => absint( $args['grid_cols'] ),
-			'grid_cols_tablet'       => absint( $args['grid_cols_tablet'] ),
-			'grid_cols_mobile'       => absint( $args['grid_cols_mobile'] ),
-			'grid_thumbnail_size'    => sanitize_text_field( $args['grid_thumbnail_size'] ),
-			'show_category'          => sanitize_text_field( $args['show_category'] ),
-			'show_date'              => sanitize_text_field( $args['show_date'] ),
-			'show_comments'          => sanitize_text_field( $args['show_comments'] ),
-			'card_height'            => is_array( $args['card_height'] ) ? array_map( 'sanitize_text_field', $args['card_height'] ) : '',
-			'card_height_mobile'     => is_array( $args['card_height_mobile'] ) ? array_map( 'sanitize_text_field', $args['card_height_mobile'] ) : '',
-			'card_height_tablet'     => is_array( $args['card_height_tablet'] ) ? array_map( 'sanitize_text_field', $args['card_height_tablet'] ) : '',
-			'show_excerpt'           => sanitize_text_field( $args['show_excerpt'] ),
-			'excerpt_num_words'      => sanitize_text_field( $args['excerpt_num_words'] ),
-			'excerpt_html'           => sanitize_text_field( $args['excerpt_html'] ),
-			'excerpt_source'         => sanitize_text_field( $args['excerpt_source'] ),
-			'post_image_width'       => sanitize_text_field( $args['post_image_width'] ),
-			'layout'                 => sanitize_text_field( $args['layout'] ),
-			'show_author'            => sanitize_text_field( $args['show_author'] ),
-			'show_read_more'         => sanitize_text_field( $args['show_read_more'] ),
-			'read_more_label'        => sanitize_text_field( $args['read_more_label'] ),
-			'read_more_class'        => sanitize_text_field( $args['read_more_class'] ),
-			'show_post_icon'         => sanitize_text_field( $args['show_post_icon'] ),
-			'query_source'           => sanitize_text_field( $args['query_source'] ),
-			'related_posts'          => sanitize_text_field( $args['related_posts'] ),
-			'related_posts_order'    => sanitize_text_field( $args['related_posts_order'] ),
-			'related_post_id'        => sanitize_text_field( $args['related_post_id'] ),
-			'filter_by_c_tax'        => is_array( $args['filter_by_c_tax'] ) ? array_map( 'sanitize_text_field', $args['filter_by_c_tax'] ) : '',
-			'labels_by_c_tax'        => sanitize_text_field( $args['labels_by_c_tax'] ),
-		];
-
-		$data['limit']  = $post_qty + 1;
-		$data['offset'] = $post_loaded;
-
-		/**
-		 * Filter load more arguments.
-		 *
-		 * @since 0.8.2
-		 *
-		 * @param array Array of arguments
-		 */
-		$data = apply_filters( 'anwp-pg-el/admin/elements_load_more_args', $data, $_POST );
-
-		$grid_posts = $this->get_grid_posts( $data );
-
-		// Check next time "load more"
-		$next_load = count( $grid_posts ) > $post_qty;
-
-		if ( $next_load ) {
-			array_pop( $grid_posts );
-		}
-
-		// Start output
-		ob_start();
-
-		foreach ( $grid_posts as $grid_post ) {
-			$data['grid_post'] = $grid_post;
-
-			if ( 'classic' === $data['layout'] ) {
-				anwp_post_grid()->load_partial( $data, 'teaser/classic' );
-			} else {
-				anwp_post_grid()->load_partial( $data, 'teaser/teaser', sanitize_key( $data['layout'] ) );
-			}
-		}
-
-		$html_output = ob_get_clean();
-
-		wp_send_json_success(
-			[
-				'html'   => $html_output,
-				'next'   => $next_load,
-				'offset' => $post_loaded + count( $grid_posts ),
-			]
-		);
-	}
-
-	/**
-	 * Handle ajax request and provide posts to load.
-	 *
-	 * @since 0.6.4
-	 */
-	public function ajax_pagination_load() {
-
-		// Activate referer check with hook (optional)
-		if ( apply_filters( 'anwp-pg-el/config/check_public_nonce', false ) ) {
-			check_ajax_referer( 'anwp-pg-public-nonce' );
-		}
-
-		$current_page = absint( $_POST['page'] );
-
-		if ( ! absint( $current_page ) ) {
-			wp_send_json_error();
-		}
-
-		// Parse with default values
-		$args = wp_parse_args(
-			wp_unslash( $_POST['args'] ),
-			[
-				'layout'                 => '',
-				'posts_to_show'          => 'latest',
-				'include_ids'            => '',
-				'exclude_ids'            => '',
-				'exclude_by_category'    => '',
-				'filter_by_category'     => '',
-				'filter_by_tag'          => '',
-				'filter_by_post_format'  => '',
-				'filter_by_author'       => '',
-				'published_in_last_days' => 0,
-				'limit'                  => 3,
-				'offset'                 => 0,
-				'grid_cols'              => 3,
-				'grid_cols_tablet'       => 2,
-				'grid_cols_mobile'       => 1,
-				'grid_thumbnail_size'    => 'large',
-				'show_category'          => 'yes',
-				'category_limit'         => 1,
-				'show_date'              => 'yes',
-				'show_comments'          => 'yes',
-				'card_height'            => '180',
-				'show_excerpt'           => 'yes',
-				'excerpt_num_words'      => '',
-				'excerpt_source'         => '',
-				'excerpt_html'           => '',
-				'post_image_width'       => '1_3',
-				'show_post_icon'         => 'yes',
-				'grid_post'              => (object) [],
-				'query_source'           => '',
-				'related_posts'          => '',
-				'related_posts_order'    => '',
-				'related_post_id'        => '',
-				'card_height_mobile'     => '',
-				'card_height_tablet'     => '',
-				'filter_by_c_tax'        => '',
-				'labels_by_c_tax'        => '',
-			]
-		);
-
-		// Sanitize and validate
-		$data = [
-			'posts_to_show'          => sanitize_text_field( $args['posts_to_show'] ),
-			'include_ids'            => wp_parse_id_list( $args['include_ids'] ),
-			'exclude_ids'            => wp_parse_id_list( $args['exclude_ids'] ),
-			'filter_by_category'     => wp_parse_id_list( $args['filter_by_category'] ),
-			'exclude_by_category'    => wp_parse_id_list( $args['exclude_by_category'] ),
-			'filter_by_tag'          => wp_parse_id_list( $args['filter_by_tag'] ),
-			'filter_by_post_format'  => sanitize_text_field( $args['filter_by_post_format'] ),
-			'filter_by_author'       => wp_parse_id_list( $args['filter_by_author'] ),
-			'published_in_last_days' => absint( $args['published_in_last_days'] ),
-			'limit'                  => absint( $args['limit'] ),
-			'category_limit'         => absint( $args['category_limit'] ),
-			'offset'                 => absint( $args['offset'] ),
-			'grid_cols'              => absint( $args['grid_cols'] ),
-			'grid_cols_tablet'       => absint( $args['grid_cols_tablet'] ),
-			'grid_cols_mobile'       => absint( $args['grid_cols_mobile'] ),
-			'grid_thumbnail_size'    => sanitize_text_field( $args['grid_thumbnail_size'] ),
-			'show_category'          => sanitize_text_field( $args['show_category'] ),
-			'show_date'              => sanitize_text_field( $args['show_date'] ),
-			'show_comments'          => sanitize_text_field( $args['show_comments'] ),
-			'card_height'            => is_array( $args['card_height'] ) ? array_map( 'sanitize_text_field', $args['card_height'] ) : '',
-			'card_height_mobile'     => is_array( $args['card_height_mobile'] ) ? array_map( 'sanitize_text_field', $args['card_height_mobile'] ) : '',
-			'card_height_tablet'     => is_array( $args['card_height_tablet'] ) ? array_map( 'sanitize_text_field', $args['card_height_tablet'] ) : '',
-			'show_excerpt'           => sanitize_text_field( $args['show_excerpt'] ),
-			'excerpt_num_words'      => sanitize_text_field( $args['excerpt_num_words'] ),
-			'excerpt_html'           => sanitize_text_field( $args['excerpt_html'] ),
-			'excerpt_source'         => sanitize_text_field( $args['excerpt_source'] ),
-			'post_image_width'       => sanitize_text_field( $args['post_image_width'] ),
-			'layout'                 => sanitize_text_field( $args['layout'] ),
-			'show_author'            => sanitize_text_field( $args['show_author'] ),
-			'show_read_more'         => sanitize_text_field( $args['show_read_more'] ),
-			'read_more_label'        => sanitize_text_field( $args['read_more_label'] ),
-			'read_more_class'        => sanitize_text_field( $args['read_more_class'] ),
-			'show_post_icon'         => sanitize_text_field( $args['show_post_icon'] ),
-			'query_source'           => sanitize_text_field( $args['query_source'] ),
-			'related_posts'          => sanitize_text_field( $args['related_posts'] ),
-			'related_posts_order'    => sanitize_text_field( $args['related_posts_order'] ),
-			'related_post_id'        => sanitize_text_field( $args['related_post_id'] ),
-			'filter_by_c_tax'        => is_array( $args['filter_by_c_tax'] ) ? array_map( 'sanitize_text_field', $args['filter_by_c_tax'] ) : '',
-			'labels_by_c_tax'        => sanitize_text_field( $args['labels_by_c_tax'] ),
-		];
-
-		$data['offset'] = $data['offset'] + ( $data['limit'] * ( $current_page - 1 ) );
-
-		/**
-		 * Filter pagination arguments.
-		 *
-		 * @param array Array of arguments
-		 *
-		 * @since 0.8.2
-		 */
-		$data = apply_filters( 'anwp-pg-el/admin/elements_pagination_args', $data, $_POST );
-
-		$grid_posts = $this->get_grid_posts( $data );
-
-		// Start output
-		ob_start();
-
-		foreach ( $grid_posts as $grid_post ) {
-			$data['grid_post'] = $grid_post;
-
-			if ( 'classic' === $data['layout'] ) {
-				anwp_post_grid()->load_partial( $data, 'teaser/classic' );
-			} else {
-				anwp_post_grid()->load_partial( $data, 'teaser/teaser', sanitize_key( $data['layout'] ) );
-			}
-		}
-
-		$html_output = ob_get_clean();
-
-		wp_send_json_success(
-			[
-				'html' => $html_output,
-			]
-		);
 	}
 
 	/**

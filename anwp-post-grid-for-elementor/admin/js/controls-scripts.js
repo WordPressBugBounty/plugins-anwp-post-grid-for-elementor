@@ -148,18 +148,18 @@ window.AnWPPostGridControls = window.AnWPPostGridControls || {};
 		// Load Initial Values
 		if ( $c.activeLink.prev( 'input' ).val() ) {
 			$.ajax( {
-				url: ajaxurl,
+				url: anwp_PG_ID_Selector.restUrl + 'anwp-pg/v1/selector/initial',
 				type: 'POST',
 				dataType: 'json',
-				data: {
-					action: 'anwp_pg_selector_initial',
+				contentType: 'application/json',
+				headers: { 'X-WP-Nonce': anwp_PG_ID_Selector.restNonce },
+				data: JSON.stringify( {
 					initial: $c.activeLink.prev( 'input' ).val(),
-					nonce: anwp_PG_ID_Selector.ajaxNonce,
 					data_context: $c.searchData.context
-				}
+				} )
 			} ).done( function( response ) {
-				if ( response.success && response.data.items ) {
-					_.each( response.data.items, function( pp ) {
+				if ( response && response.items ) {
+					_.each( response.items, function( pp ) {
 						plugin.addSelected( pp.id, pp.name );
 					} );
 				}
@@ -191,18 +191,18 @@ window.AnWPPostGridControls = window.AnWPPostGridControls || {};
 		$c.searchData.s = $( '#anwp-pg-selector-modaal__search' ).val();
 
 		$c.xhr = $.ajax( {
-			url: ajaxurl,
+			url: anwp_PG_ID_Selector.restUrl + 'anwp-pg/v1/selector/search',
 			type: 'POST',
 			dataType: 'json',
-			data: {
-				action: 'anwp_pg_selector_data',
-				nonce: anwp_PG_ID_Selector.ajaxNonce,
+			contentType: 'application/json',
+			headers: { 'X-WP-Nonce': anwp_PG_ID_Selector.restNonce },
+			data: JSON.stringify( {
 				s: $c.searchData.s,
 				context: $c.searchData.context
-			}
+			} )
 		} ).done( function( response ) {
-			if ( response.success ) {
-				$( '#anwp-pg-selector-modaal__content' ).html( response.data.html );
+			if ( response ) {
+				$( '#anwp-pg-selector-modaal__content' ).html( response.html );
 			}
 		} ).always( function() {
 			$( '#anwp-pg-selector-modaal__content' ).removeClass( 'anwp-search-is-active' );
