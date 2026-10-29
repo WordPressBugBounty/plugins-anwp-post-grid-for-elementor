@@ -1,7 +1,4 @@
 /*--------------------------------------------------------------
-# Vendor
---------------------------------------------------------------*/
-/*--------------------------------------------------------------
 # Modules
 --------------------------------------------------------------*/
 .d-none {
@@ -23,34 +20,28 @@
   clear: both;
   margin: 0;
 }
-
 .anwp-pg-selector-table td, .anwp-pg-selector-table th {
   white-space: nowrap;
   color: #2c3338;
   line-height: 1.4em;
 }
-
 .anwp-pg-selector-table thead th, .anwp-pg-selector-table thead td {
   border-bottom: 1px solid #c3c4c7;
 }
-
 .anwp-pg-selector-table tfoot th, .anwp-pg-selector-table tfoot td {
   border-top: 1px solid #c3c4c7;
   border-bottom: none;
 }
-
 .anwp-pg-selector-table td {
   font-size: 13px;
   line-height: 1.5em;
   padding: 8px 10px;
 }
-
 .anwp-pg-selector-table .check-column {
   vertical-align: middle;
   padding: 4px 0 0 3px;
   width: 2.2em;
 }
-
 .anwp-pg-selector-table tbody > tr:nth-child(odd) {
   background-color: #f6f7f7;
 }
@@ -59,8 +50,7 @@
   display: inline-block;
   text-decoration: none;
   font-size: 13px;
-  line-height: 2.15384615;
-  /* 28px */
+  line-height: 2.15384615; /* 28px */
   min-height: 30px;
   margin: 0;
   padding: 0 10px;
@@ -75,15 +65,12 @@
   border-color: #2271b1;
   background: #f6f7f7;
   vertical-align: top;
-  /* :active state */
 }
-
 .anwp-g-button:hover {
   background: #f0f0f1;
   border-color: #0a4b78;
   color: #0a4b78;
 }
-
 .anwp-g-button:focus {
   background: #f6f7f7;
   border-color: #3582c4;
@@ -94,7 +81,9 @@
   /* Reset inherited offset from Gutenberg */
   outline-offset: 0;
 }
-
+.anwp-g-button {
+  /* :active state */
+}
 .anwp-g-button:active {
   background: #f6f7f7;
   border-color: #8c8f94;
@@ -108,17 +97,14 @@
   text-decoration: none;
   text-shadow: none;
 }
-
 .anwp-g-button-primary:hover, .anwp-g-button-primary:focus {
   background: #135e96;
   border-color: #135e96;
   color: #fff;
 }
-
 .anwp-g-button-primary:focus {
   box-shadow: 0 0 0 1px #fff, 0 0 0 3px #2271b1;
 }
-
 .anwp-g-button-primary:active {
   background: #135e96;
   border-color: #135e96;
@@ -176,7 +162,6 @@
   line-height: 1;
   min-height: 20px;
 }
-
 .anwp-pg-selector-action-no .dashicons, .anwp-pg-selector-action .dashicons {
   line-height: 1;
 }
@@ -185,27 +170,30 @@
   padding: 2px 8px 0;
 }
 
-#anwp-pg-selector-modaal {
-  display: none;
+dialog.anwp-pg-selector-modal {
+  box-sizing: border-box;
+  width: calc(100% - 50px);
+  max-width: 600px;
+  max-height: calc(100% - 120px);
+  margin: 60px auto auto;
+  padding: 0;
+  border: 0;
+  color: #000;
+  background: #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  overflow: auto;
 }
 
-.anwp-pg-selector-modal.modaal-wrapper {
-  z-index: 10000060 !important;
+dialog.anwp-pg-selector-modal * {
+  box-sizing: border-box;
 }
 
-.anwp-pg-selector-modal + .modaal-overlay {
-  z-index: 10000050 !important;
+dialog.anwp-pg-selector-modal::-webkit-backdrop {
+  background: rgba(0, 0, 0, 0.8);
 }
 
-.anwp-pg-selector-modal .modaal-inner-wrapper {
-  vertical-align: top;
-}
-
-.anwp-pg-selector-modal .modaal-inner-wrapper .select2-selection__clear {
-  font-size: 20px;
-  color: #820f0f;
-  line-height: 1.2;
-  padding: 0 2px;
+dialog.anwp-pg-selector-modal::backdrop {
+  background: rgba(0, 0, 0, 0.8);
 }
 
 #anwp-pg-selector-modaal__search-spinner {
@@ -352,15 +340,6 @@
   margin-top: 11px;
 }
 
-.anwp-modaal-wrapper.anwp-modaal-wrapper--top .modaal-inner-wrapper {
-  vertical-align: top;
-  padding-top: 50px;
-}
-
-.anwp-modaal-wrapper.anwp-modaal-wrapper--top .anwp-admin-modal__content {
-  max-height: calc(100vh - 200px) !important;
-}
-
 .anwp-line-height-1 {
   line-height: 1 !important;
 }
@@ -457,26 +436,10 @@ h1 ~ .anwp-visible-after-header {
 }
 
 /*--------------------------------------------------------------
-# Modaal
+# Selector Modal
 --------------------------------------------------------------*/
 #anwp-pg-shortcode-modal {
   display: none !important;
-}
-
-.anwp-pg-shortcode-modal, .modaal-wrapper {
-  z-index: 100060 !important;
-}
-
-.modaal-overlay {
-  z-index: 100050 !important;
-}
-
-.anwp-pg-shortcode-modal .modaal-content-container {
-  padding: 0;
-}
-
-.anwp-pg-shortcode-modal .modaal-container {
-  max-width: 600px;
 }
 
 .anwp-pg-shortcode-modal .anwp-pg-shortcode-modal__header {
@@ -518,214 +481,4 @@ h1 ~ .anwp-visible-after-header {
   stroke-width: 0;
   stroke: none;
   fill: #595959;
-}
-
-/*!
-	Modaal - accessible modals - v0.4.4
-	by Humaan, for all humans.
-	http://humaan.com
- */
-.modaal-noscroll {
-  overflow: hidden;
-}
-
-.modaal-accessible-hide {
-  position: absolute !important;
-  clip: rect(1px 1px 1px 1px);
-  /* IE6, IE7 */
-  clip: rect(1px, 1px, 1px, 1px);
-  padding: 0 !important;
-  border: 0 !important;
-  height: 1px !important;
-  width: 1px !important;
-  overflow: hidden;
-}
-
-.modaal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 999;
-  opacity: 0;
-}
-
-.modaal-wrapper {
-  display: block;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 9999;
-  overflow: auto;
-  opacity: 1;
-  box-sizing: border-box;
-  -webkit-overflow-scrolling: touch;
-  transition: all 0.3s ease-in-out;
-}
-
-.modaal-wrapper * {
-  box-sizing: border-box;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-backface-visibility: hidden;
-}
-
-.modaal-wrapper .modaal-close {
-  border: none;
-  background: transparent;
-  padding: 0;
-  -webkit-appearance: none;
-}
-
-.modaal-wrapper.modaal-start_none {
-  display: none;
-  opacity: 1;
-}
-
-.modaal-wrapper.modaal-start_fade {
-  opacity: 0;
-}
-
-.modaal-wrapper *[tabindex="0"] {
-  outline: none !important;
-}
-
-.modaal-wrapper.modaal-fullscreen {
-  overflow: hidden;
-}
-
-.modaal-outer-wrapper {
-  display: table;
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.modaal-fullscreen .modaal-outer-wrapper {
-  display: block;
-}
-
-.modaal-inner-wrapper {
-  display: table-cell;
-  width: 100%;
-  height: 100%;
-  position: relative;
-  vertical-align: middle;
-  text-align: center;
-  padding: 80px 25px;
-}
-
-.modaal-fullscreen .modaal-inner-wrapper {
-  padding: 0;
-  display: block;
-  vertical-align: top;
-}
-
-.modaal-container {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-  margin: auto;
-  text-align: left;
-  color: #000;
-  max-width: 1000px;
-  border-radius: 0px;
-  background: #fff;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  cursor: auto;
-}
-
-.modaal-container.is_loading {
-  height: 100px;
-  width: 100px;
-  overflow: hidden;
-}
-
-.modaal-fullscreen .modaal-container {
-  max-width: none;
-  height: 100%;
-  overflow: auto;
-}
-
-.modaal-close {
-  position: fixed;
-  right: 20px;
-  top: 20px;
-  color: #fff;
-  cursor: pointer;
-  opacity: 1;
-  width: 50px;
-  height: 50px;
-  background: rgba(0, 0, 0, 0);
-  border-radius: 100%;
-  transition: all 0.2s ease-in-out;
-}
-
-.modaal-close:focus,
-.modaal-close:hover {
-  outline: none;
-  background: #fff;
-}
-
-.modaal-close:focus:before,
-.modaal-close:focus:after,
-.modaal-close:hover:before,
-.modaal-close:hover:after {
-  background: #b93d0c;
-}
-
-.modaal-close span {
-  position: absolute !important;
-  clip: rect(1px 1px 1px 1px);
-  /* IE6, IE7 */
-  clip: rect(1px, 1px, 1px, 1px);
-  padding: 0 !important;
-  border: 0 !important;
-  height: 1px !important;
-  width: 1px !important;
-  overflow: hidden;
-}
-
-.modaal-close:before,
-.modaal-close:after {
-  display: block;
-  content: " ";
-  position: absolute;
-  top: 14px;
-  left: 23px;
-  width: 4px;
-  height: 22px;
-  border-radius: 4px;
-  background: #fff;
-  transition: background 0.2s ease-in-out;
-}
-
-.modaal-close:before {
-  -webkit-transform: rotate(-45deg);
-  transform: rotate(-45deg);
-}
-
-.modaal-close:after {
-  -webkit-transform: rotate(45deg);
-  transform: rotate(45deg);
-}
-
-.modaal-fullscreen .modaal-close {
-  background: #afb7bc;
-  right: 10px;
-  top: 10px;
-}
-
-.modaal-content-container {
-  padding: 30px;
-}
-
-@media screen and (max-height: 1000px) {
-  .modaal-inner-wrapper {
-    padding-top: 60px;
-    padding-bottom: 60px;
-  }
 }

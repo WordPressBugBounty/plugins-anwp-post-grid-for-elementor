@@ -32,6 +32,8 @@ window.AnWPPostGridControls = window.AnWPPostGridControls || {};
 		$c.activeLink  = null;
 		$c.xhr         = null;
 		$c.initialized = false;
+
+		$c.backdropDown = false;
 	};
 
 	plugin.bindEvents = function() {
@@ -64,7 +66,29 @@ window.AnWPPostGridControls = window.AnWPPostGridControls || {};
 
 				$c.body.on( 'click', '#anwp-pg-selector-modaal__cancel', function( e ) {
 					e.preventDefault();
-					$c.activeLink.modaal( 'close' );
+					plugin.closeSelectorModaal();
+				} );
+
+				// Backdrop click closes the selector. Track mousedown too, so a text selection dragged
+				// out of the search input onto the backdrop doesn't close it.
+				$c.body.on( 'mousedown', '#anwp-pg-selector-modaal', function( e ) {
+					$c.backdropDown = e.target === this;
+				} );
+
+				$c.body.on( 'click', '#anwp-pg-selector-modaal', function( e ) {
+					if ( e.target === this && $c.backdropDown ) {
+						plugin.closeSelectorModaal();
+					}
+				} );
+
+				// Elementor's "esc" shortcut (keydown on window) calls preventDefault(), which cancels
+				// the dialog's native close on Esc - close it here and keep the key from Elementor.
+				$c.body.on( 'keydown', '#anwp-pg-selector-modaal', function( e ) {
+					if ( 'Escape' === e.key ) {
+						e.preventDefault();
+						e.stopPropagation();
+						plugin.closeSelectorModaal();
+					}
 				} );
 
 				$c.body.on( 'click', '.anwp-pg-selector-action', function( e ) {
@@ -86,7 +110,7 @@ window.AnWPPostGridControls = window.AnWPPostGridControls || {};
 						output.push( $( this ).find( '.anwp-pg-selector-action-no' ).data( 'id' ) );
 					} );
 
-					$c.activeLink.modaal( 'close' );
+					plugin.closeSelectorModaal();
 					$c.activeLink.prev( 'input' ).val( output.join( ',' ) );
 					$c.activeLink.prev( 'input' ).trigger( 'input' );
 					$c.activeLink.prev( 'input' ).trigger( 'change' );
@@ -109,20 +133,19 @@ window.AnWPPostGridControls = window.AnWPPostGridControls || {};
 
 	plugin.openSelectorModaal = function( evt ) {
 
+		var dialog = document.getElementById( 'anwp-pg-selector-modaal' );
+
 		$c.activeLink = $( evt.currentTarget );
 
-		// Initialize modaal
-		$c.activeLink.modaal(
-			{
-				content_source: '#anwp-pg-selector-modaal',
-				custom_class: 'anwp-pg-shortcode-modal anwp-pg-selector-modal',
-				hide_close: true,
-				animation: 'none',
-				start_open: true
-			}
-		);
+		if ( ! dialog.open ) {
+			dialog.showModal();
+		}
 
 		plugin.initializeSelectorContent();
+	};
+
+	plugin.closeSelectorModaal = function() {
+		document.getElementById( 'anwp-pg-selector-modaal' ).close();
 	};
 
 	plugin.addSelected = function( id, name ) {

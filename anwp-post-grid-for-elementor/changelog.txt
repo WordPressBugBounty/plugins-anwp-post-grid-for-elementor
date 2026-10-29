@@ -1,5 +1,22 @@
 == Changelog ==
 
+= 1.4.0 - 2026-10-29 =
+* important: if you use AnWP Post Grid Premium, update it to 1.1.0 at the same time
+* important: requires PHP 7.4 or higher (was 5.6) and Elementor 3.5.0 or higher (was 3.1.0) - WordPress keeps sites on older PHP on 1.3.4
+* changed: grid columns, slides and card height now follow your Elementor breakpoints (Site Settings > Layout > Breakpoints), including custom widths - columns and slides also take their own values on extra devices like Laptop or Tablet Extra
+* changed: with the default breakpoints, screens 576-767px wide now use the Mobile value (was Tablet), and 769-1024px sliders and 992-1024px grids use Tablet (was Desktop) - the page now matches the editor preview
+* changed: with Elementor's Optimized Markup on, widgets no longer print the inner "elementor-widget-container" box (same as Elementor's own widgets) - custom CSS that targets it needs updating
+* fixed: card height now applies exactly as typed - values off the 10px step (like 255) or under 150 were ignored before (Classic Grid and Classic Slider keep their 150px minimum)
+* fixed: in the Elementor editor, an untouched grid or slider showed its Desktop columns on Tablet and Mobile
+* note: theme copies of the plugin templates (yourtheme/anwp-post-grid/) keep working and follow the new breakpoints, even if they hardcode column classes
+* changed: "Published in Last days" now filters posts in every "Posts to Show" order except Custom (before, it only worked with Oldest, Most commented and Most viewed)
+* fixed: Classic Grid showed the video/gallery icon and the custom post icon on top of each other - the custom post icon now wins
+* fixed: Light Grid "Post Card Background Color on Hover" had no effect with Style F
+* fixed: Simple, Light and Classic Grid and Classic Blog with "load more" crashed on PHP 8 when the "Posts Offset" field was left empty
+* improved: readable (unminified) copy of the settings page script and its source code are now included
+* improved: the post ID selector in the Elementor editor uses the browser's native dialog (removed the Modaal library)
+* improved: new Welcome page (AnWP Post Grid > Welcome) - all 16 widgets with screenshots and demo links, a quick start and what's new. After a feature update (like 1.4 to 1.5), a one-time notice links to it
+
 = 1.3.4 - 2026-10-17 =
 * important: if you use AnWP Post Grid Premium, update it to 1.0.5 at the same time - older Premium versions lose "load more" and pagination in Premium widgets
 * improved: security and stability hardening

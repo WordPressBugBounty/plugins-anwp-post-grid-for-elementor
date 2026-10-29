@@ -38,6 +38,15 @@ class AnWP_Post_Grid_Element_Flex_Slider extends Widget_Base {
 	}
 
 	/**
+	 * Single wrapper under Optimized Markup, the legacy inner container otherwise.
+	 *
+	 * @return bool
+	 */
+	public function has_widget_inner_wrapper(): bool {
+		return ! \Elementor\Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
+	/**
 	 * Get widget title.
 	 *
 	 * @return string Widget title.
@@ -89,12 +98,12 @@ class AnWP_Post_Grid_Element_Flex_Slider extends Widget_Base {
 	 * @since  0.1.0
 	 * @access protected
 	 */
-	protected function register_controls() { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	protected function register_controls() {
 
 		/**
 		 * Before start of controls.
 		 *
-		 * @param AnWP_Post_Grid_Element_Classic_Slider $this The element.
+		 * @param AnWP_Post_Grid_Element_Flex_Slider $this The element.
 		 *
 		 * @since 0.9.0
 		 */
@@ -103,7 +112,7 @@ class AnWP_Post_Grid_Element_Flex_Slider extends Widget_Base {
 		/**
 		 * Load Section - Query
 		 *
-		 * @param AnWP_Post_Grid_Element_Classic_Blog $this The element.
+		 * @param AnWP_Post_Grid_Element_Flex_Slider $this The element.
 		 *
 		 * @since 0.9.0
 		 */
@@ -112,7 +121,7 @@ class AnWP_Post_Grid_Element_Flex_Slider extends Widget_Base {
 		/**
 		 * Load Section - Header.
 		 *
-		 * @param AnWP_Post_Grid_Element_Classic_Blog $this The element.
+		 * @param AnWP_Post_Grid_Element_Flex_Slider $this The element.
 		 *
 		 * @since 0.9.0
 		 */
@@ -121,7 +130,7 @@ class AnWP_Post_Grid_Element_Flex_Slider extends Widget_Base {
 		/**
 		 * After Control Section - Header.
 		 *
-		 * @param AnWP_Post_Grid_Element_Classic_Slider $this The element.
+		 * @param AnWP_Post_Grid_Element_Flex_Slider $this The element.
 		 *
 		 * @since 0.9.0
 		 */
@@ -292,6 +301,9 @@ class AnWP_Post_Grid_Element_Flex_Slider extends Widget_Base {
 				'desktop_default' => [
 					'unit' => 'px',
 					'size' => 180,
+				],
+				'selectors'       => [
+					'{{WRAPPER}} .anwp-pg-wrap' => '--anwp-pg-card-h: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);
@@ -618,7 +630,7 @@ class AnWP_Post_Grid_Element_Flex_Slider extends Widget_Base {
 		/**
 		 * Before end of controls.
 		 *
-		 * @param AnWP_Post_Grid_Element_Classic_Slider $this The element.
+		 * @param AnWP_Post_Grid_Element_Flex_Slider $this The element.
 		 *
 		 * @since 0.9.0
 		 */

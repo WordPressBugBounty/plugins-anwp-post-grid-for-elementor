@@ -51,8 +51,7 @@ class AnWP_Post_Grid_Control_Id_Selector extends Base_Data_Control {
 		wp_enqueue_style( 'anwp-id-selector' );
 
 		// Scripts
-		wp_register_script( 'modaal', AnWP_Post_Grid::url( 'vendor/modaal/modaal.min.js' ), [ 'jquery', 'underscore' ], '0.4.0', false );
-		wp_register_script( 'anwp-id-selector', AnWP_Post_Grid::url( 'admin/js/controls-scripts.js' ), [ 'modaal' ], AnWP_Post_Grid::VERSION, false );
+		wp_register_script( 'anwp-id-selector', AnWP_Post_Grid::url( 'admin/js/controls-scripts.js' ), [ 'jquery', 'underscore' ], AnWP_Post_Grid::VERSION, false );
 		wp_enqueue_script( 'anwp-id-selector' );
 
 		wp_localize_script(
@@ -130,7 +129,7 @@ class AnWP_Post_Grid_Control_Id_Selector extends Base_Data_Control {
 	public function include_selector_modaal() {
 		ob_start();
 		?>
-		<div id="anwp-pg-selector-modaal">
+		<dialog id="anwp-pg-selector-modaal" class="anwp-pg-shortcode-modal anwp-pg-selector-modal">
 			<div class="anwp-pg-shortcode-modal__header">
 				<h3 style="margin: 0"><?php echo esc_html__( 'AnWP Post Grid Selector', 'anwp-post-grid' ); ?>: <span id="anwp-pg-selector-modaal__header-context"></span></h3>
 			</div>
@@ -153,7 +152,7 @@ class AnWP_Post_Grid_Control_Id_Selector extends Base_Data_Control {
 				<button id="anwp-pg-selector-modaal__cancel" class="anwp-g-button"><?php echo esc_html__( 'Cancel', 'anwp-post-grid' ); ?></button>
 				<button id="anwp-pg-selector-modaal__insert" class="anwp-g-button anwp-g-button-primary"><?php echo esc_html__( 'Insert', 'anwp-post-grid' ); ?></button>
 			</div>
-		</div>
+		</dialog>
 		<?php
 		return ob_get_clean();
 	}

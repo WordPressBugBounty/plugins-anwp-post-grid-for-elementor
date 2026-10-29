@@ -57,7 +57,7 @@ if ( empty( $data->grid_posts ) ) {
 	<?php if ( $data->show_load_more ) : ?>
 		<div class="w-100 anwp-pg-load-more">
 			<button class="button anwp-btn-outline-secondary anwp-pg-load-more__btn mx-auto d-block my-3 <?php echo esc_attr( $data->load_more_class ); ?>" type="button"
-				data-anwp-loaded-qty="<?php echo absint( count( $data->grid_posts ) + $data->offset ); ?>"
+				data-anwp-loaded-qty="<?php echo absint( count( $data->grid_posts ) + absint( $data->offset ) ); ?>"
 				data-anwp-posts-per-load="<?php echo absint( $data->posts_per_load ); ?>"
 				data-anwp-load-more="<?php echo esc_attr( anwp_post_grid()->elements->get_serialized_load_more_data( $data, 'classic-grid' ) ); ?>">
 				<span class="anwp-pg-load-more__label"><?php echo empty( $data->load_more_label ) ? esc_html__( 'load more', 'anwp-post-grid' ) : esc_html( $data->load_more_label ); ?></span>

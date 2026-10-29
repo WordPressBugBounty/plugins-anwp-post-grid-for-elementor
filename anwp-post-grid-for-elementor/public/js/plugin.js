@@ -136,20 +136,10 @@ window.anwpPostGridElementor = {};
 			autoHeight: 'yes' !== $slider.data( 'pg-show-read-more' ),
 			roundLengths: true,
 			effect: $slider.data( 'pg-effect' ),
-			spaceBetween: $slider.data( 'pg-space-between' ),
-			slidesPerView: $slider.data( 'pg-slides-per-view-mobile' ),
-			slidesPerGroup: $slider.data( 'pg-slides-per-group-mobile' ),
-			breakpoints: {
-				576: {
-					slidesPerView: $slider.data( 'pg-slides-per-view-tablet' ),
-					slidesPerGroup: $slider.data( 'pg-slides-per-group-tablet' )
-				},
-				769: {
-					slidesPerView: $slider.data( 'pg-slides-per-view' ),
-					slidesPerGroup: $slider.data( 'pg-slides-per-group' )
-				}
-			}
+			spaceBetween: $slider.data( 'pg-space-between' )
 		};
+
+		$.extend( swiperOptions, app.getSwiperBreakpoints( $slider ) );
 
 		if ( 'yes' === $slider.data( 'pg-loop' ) ) {
 			swiperOptions.loop = true;
@@ -192,6 +182,69 @@ window.anwpPostGridElementor = {};
 		} else {
 			new Swiper( $slider[0], swiperOptions );
 		}
+	};
+
+	/**
+	 * Swiper slidesPerView / slidesPerGroup per active Elementor device (also used by premium).
+	 *
+	 * Swiper breakpoints are min-widths: the smallest device is the base, each next device starts
+	 * at the previous device's max + 1, widescreen at its own (min) value. A device without a
+	 * value inherits from the next larger one, as in Elementor.
+	 *
+	 * @param {jQuery} $slider Slider with data-pg-responsive (slides_to_show / slides_to_scroll + _{device} keys).
+	 * @return {Object} slidesPerView, slidesPerGroup and breakpoints
+	 */
+	app.getSwiperBreakpoints = function( $slider ) {
+		var settings    = $slider.data( 'pg-responsive' );
+		var breakpoints = elementorFrontend.config.responsive.activeBreakpoints;
+		var devices     = elementorFrontend.breakpoints.getActiveBreakpointsList( { withDesktop: true } );
+		var output      = { breakpoints: {} };
+
+		// Template overrides from before 1.4.0 print the old fixed attributes.
+		if ( ! settings || undefined === settings.slides_to_show ) {
+			settings = {
+				slides_to_show: $slider.data( 'pg-slides-per-view' ),
+				slides_to_show_tablet: $slider.data( 'pg-slides-per-view-tablet' ),
+				slides_to_show_mobile: $slider.data( 'pg-slides-per-view-mobile' ),
+				slides_to_scroll: $slider.data( 'pg-slides-per-group' ),
+				slides_to_scroll_tablet: $slider.data( 'pg-slides-per-group-tablet' ),
+				slides_to_scroll_mobile: $slider.data( 'pg-slides-per-group-mobile' )
+			};
+		}
+
+		// Same walk as Elementor's getResponsiveControlValue() (3.11+, the plugin supports 3.5):
+		// the device's own value, else the next larger device's, up to desktop.
+		var getValue = function( key, index ) {
+			var device = devices[ index ];
+
+			while ( 'desktop' !== device ) {
+				if ( settings[ key + '_' + device ] || 0 === settings[ key + '_' + device ] ) {
+					return settings[ key + '_' + device ];
+				}
+
+				device = 'widescreen' === device ? 'desktop' : devices[ ++index ];
+			}
+
+			return settings[ key ];
+		};
+
+		devices.forEach( function( device, index ) {
+			var values = {
+				slidesPerView: +getValue( 'slides_to_show', index ) || 1,
+				slidesPerGroup: +getValue( 'slides_to_scroll', index ) || 1
+			};
+
+			if ( 0 === index ) {
+				output.slidesPerView  = values.slidesPerView;
+				output.slidesPerGroup = values.slidesPerGroup;
+			} else if ( 'widescreen' === device ) {
+				output.breakpoints[ breakpoints.widescreen.value ] = values;
+			} else {
+				output.breakpoints[ breakpoints[ devices[ index - 1 ] ].value + 1 ] = values;
+			}
+		} );
+
+		return output;
 	};
 
 	app.initFlexSwiper = function( $scope ) {

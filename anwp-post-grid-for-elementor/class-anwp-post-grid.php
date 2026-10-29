@@ -47,7 +47,16 @@ final class AnWP_Post_Grid {
 	 * @var    string
 	 * @since  0.1.0
 	 */
-	const VERSION = '1.3.4';
+	const VERSION = '1.4.0';
+
+	/**
+	 * Version of the widget `selectors` output. Raise it only in a release that changes them:
+	 * a change clears Elementor's generated CSS on every site once (maybe_clear_elementor_css()).
+	 *
+	 * @var    string
+	 * @since  1.4.0
+	 */
+	const CSS_VERSION = '1.4.0';
 
 	/**
 	 * URL of plugin directory.
@@ -164,7 +173,7 @@ final class AnWP_Post_Grid {
 			'"%1$s" requires "%2$s" version %3$s or greater.',
 			'<strong>AnWP Post Grid</strong>',
 			'<strong>Elementor</strong>',
-			'3.1.0'
+			'3.5.0'
 		);
 
 		// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -184,9 +193,7 @@ final class AnWP_Post_Grid {
 
 		require_once __DIR__ . '/includes/class-anwp-post-grid-control-id-selector.php';
 
-		if ( defined( 'ELEMENTOR_VERSION' ) && version_compare( ELEMENTOR_VERSION, '3.5.0', '>=' ) ) {
-			$controls_manager->register( new AnWP_Post_Grid_Control_Id_Selector() );
-		}
+		$controls_manager->register( new AnWP_Post_Grid_Control_Id_Selector() );
 	}
 
 	/**
@@ -201,17 +208,13 @@ final class AnWP_Post_Grid {
 	public function hooks() {
 
 		// Check for required Elementor version
-		if ( defined( 'ELEMENTOR_VERSION' ) && ! version_compare( ELEMENTOR_VERSION, '3.1.0', '>=' ) ) {
+		if ( defined( 'ELEMENTOR_VERSION' ) && ! version_compare( ELEMENTOR_VERSION, '3.5.0', '>=' ) ) {
 			add_action( 'admin_notices', [ $this, 'admin_notice_minimum_elementor_version' ] );
 
 			return false;
 		}
 
-		if ( ( defined( 'ELEMENTOR_VERSION' ) && version_compare( ELEMENTOR_VERSION, '3.5.0', '>=' ) ) ) {
-			add_action( 'elementor/controls/register', [ $this, 'register_an_wp_post_grid_control_id_selector' ] );
-		} else {
-			add_action( 'elementor/controls/controls_registered', [ $this, 'register_an_wp_post_grid_control_id_selector' ] );
-		}
+		add_action( 'elementor/controls/register', [ $this, 'register_an_wp_post_grid_control_id_selector' ] );
 
 		/**
 		 * Bump init actions
@@ -219,6 +222,13 @@ final class AnWP_Post_Grid {
 		 * @since 0.1.0
 		 */
 		add_action( 'init', [ $this, 'init' ], 0 );
+
+		/**
+		 * Rebuild Elementor CSS after a Post Grid update
+		 *
+		 * @since 1.4.0
+		 */
+		add_action( 'init', [ $this, 'maybe_clear_elementor_css' ] );
 
 		/**
 		 * Add theme name to body classes
@@ -287,6 +297,15 @@ final class AnWP_Post_Grid {
 		 */
 		add_action( 'admin_init', [ $this, 'activation_redirect' ] );
 
+		/**
+		 * Welcome page styles + one-time "what's new" notice after an update
+		 *
+		 * @since 1.4.0
+		 */
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_welcome_styles' ] );
+		add_action( 'admin_notices', [ $this, 'render_update_notice' ] );
+		add_action( 'admin_init', [ $this, 'dismiss_update_notice' ] );
+
 		// Add plugin meta links.
 		add_filter( 'plugin_row_meta', [ $this, 'add_plugin_meta_links' ], 10, 2 );
 	}
@@ -331,6 +350,34 @@ final class AnWP_Post_Grid {
 
 		// Initialize plugin classes.
 		$this->plugin_classes();
+	}
+
+	/**
+	 * Clear Elementor's generated CSS once after a core or premium CSS_VERSION change.
+	 *
+	 * Widget layout (columns, card height) comes from `selectors` rules in each page's Post CSS.
+	 * Elementor rebuilds that CSS on its own update and on plugin (de)activation, not on a plugin update,
+	 * so pages would keep the old rules until re-saved. Keyed on CSS versions, not plugin versions,
+	 * so releases that don't touch `selectors` leave every site's CSS alone.
+	 *
+	 * @since 1.4.0
+	 */
+	public function maybe_clear_elementor_css() {
+
+		$versions = self::CSS_VERSION . '|' . ( defined( 'ANWP_POST_GRID_PREMIUM_CSS_VERSION' ) ? ANWP_POST_GRID_PREMIUM_CSS_VERSION : '' );
+
+		if ( get_option( 'anwp_pg_elementor_css_version' ) === $versions ) {
+			return;
+		}
+
+		if ( ! class_exists( '\Elementor\Plugin' ) || empty( \Elementor\Plugin::$instance->files_manager ) ) {
+			return;
+		}
+
+		// Option first: a concurrent request then clears at most once more, which is harmless.
+		update_option( 'anwp_pg_elementor_css_version', $versions, true );
+
+		\Elementor\Plugin::$instance->files_manager->clear_cache();
 	}
 
 	/**
@@ -687,7 +734,187 @@ final class AnWP_Post_Grid {
 			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'anwp-post-grid' ) );
 		}
 
-		self::include_file( 'admin/views/welcome' );
+		// The page shows what's new, so the update notice has done its job.
+		update_option( 'anwp_pg_welcome_version', self::VERSION, false );
+
+		$data = $this->get_welcome_data();
+
+		include self::dir( 'admin/views/welcome.php' );
+	}
+
+	/**
+	 * Welcome page data. Premium adds support_url, premium_version and premium_readme.
+	 *
+	 * @return array
+	 * @since 1.4.0
+	 */
+	public function get_welcome_data() {
+
+		$data = [
+			'premium'         => self::is_premium_active(),
+			'premium_url'     => 'https://anwp.pro/anwp-post-grid-for-elementor-premium/',
+			'readme'          => self::dir( 'readme.txt' ),
+			'support_url'     => '',
+			'premium_version' => '',
+			'premium_readme'  => '',
+		];
+
+		/**
+		 * Filter Welcome page data.
+		 *
+		 * @since 1.4.0
+		 *
+		 * @param array $data Welcome page data.
+		 */
+		return apply_filters( 'anwp-pg-el/welcome/data', $data );
+	}
+
+	/**
+	 * Load Welcome page styles (Welcome screen only).
+	 *
+	 * @param string $hook_suffix Current admin page.
+	 *
+	 * @since 1.4.0
+	 */
+	public function enqueue_welcome_styles( $hook_suffix ) {
+
+		if ( 'toplevel_page_anwp-post-grid' !== $hook_suffix ) {
+			return;
+		}
+
+		if ( is_rtl() ) {
+			wp_enqueue_style( 'anwp-pg-admin-styles-rtl', self::url( 'admin/css/styles-rtl.min.css' ), [], self::VERSION );
+		} else {
+			wp_enqueue_style( 'anwp-pg-admin-styles', self::url( 'admin/css/styles.min.css' ), [], self::VERSION );
+		}
+	}
+
+	/**
+	 * Parse the "== Changelog ==" section of a readme.txt.
+	 *
+	 * Version blocks are "= X.Y.Z - date =" followed by "* type: text" lines.
+	 *
+	 * @param string $file_path Path to readme.txt (or changelog.txt).
+	 * @param int    $limit     Number of versions to return.
+	 *
+	 * @return array [ [ 'version', 'date', 'changes' => [ [ 'type', 'text' ] ] ] ]
+	 * @since 1.4.0
+	 */
+	public static function parse_changelog( string $file_path, int $limit = 3 ): array {
+
+		if ( ! is_readable( $file_path ) ) {
+			return [];
+		}
+
+		$content = str_replace( "\r\n", "\n", (string) file_get_contents( $file_path ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+
+		// readme.txt has other "= ... =" headings (FAQ), so read the Changelog section only.
+		if ( ! preg_match( '/^== Changelog ==[ \t]*$(.*?)(?=^== |\z)/ms', $content, $section ) ) {
+			return [];
+		}
+
+		preg_match_all( '/^= ([0-9.]+) - ([^=\n]+?) =[ \t]*\n((?:\*[^\n]*(?:\n|$))+)/m', $section[1], $blocks, PREG_SET_ORDER );
+
+		$versions = [];
+
+		foreach ( array_slice( $blocks, 0, max( 0, $limit ) ) as $block ) {
+			$changes = [];
+
+			foreach ( explode( "\n", trim( $block[3] ) ) as $line ) {
+				$line = trim( preg_replace( '/^\*\s*/', '', $line ) );
+
+				if ( '' === $line ) {
+					continue;
+				}
+
+				if ( preg_match( '/^([a-z]+):\s*(.+)$/i', $line, $match ) ) {
+					$changes[] = [
+						'type' => strtolower( $match[1] ),
+						'text' => $match[2],
+					];
+				} else {
+					$changes[] = [
+						'type' => '',
+						'text' => $line,
+					];
+				}
+			}
+
+			$versions[] = [
+				'version' => $block[1],
+				'date'    => trim( $block[2] ),
+				'changes' => $changes,
+			];
+		}
+
+		return $versions;
+	}
+
+	/**
+	 * Show the one-time "what's new" notice?
+	 * After a major or minor update only (1.4 -> 1.5, not 1.4.0 -> 1.4.1): activate() stores the version on a fresh install.
+	 *
+	 * @return bool
+	 * @since 1.4.0
+	 */
+	public function is_update_notice_due() {
+
+		$major_minor = static function ( $version ) {
+			return implode( '.', array_slice( explode( '.', (string) $version ), 0, 2 ) );
+		};
+
+		return version_compare( $major_minor( get_option( 'anwp_pg_welcome_version', '0' ) ), $major_minor( self::VERSION ), '<' );
+	}
+
+	/**
+	 * Render the "what's new" notice on the Dashboard and Plugins screens.
+	 *
+	 * @since 1.4.0
+	 */
+	public function render_update_notice() {
+
+		$screen = get_current_screen();
+
+		if ( ! $screen || ! in_array( $screen->id, [ 'dashboard', 'plugins' ], true ) || ! current_user_can( 'manage_options' ) || ! $this->is_update_notice_due() ) {
+			return;
+		}
+
+		$dismiss_url = wp_nonce_url( add_query_arg( 'anwp_pg_welcome_dismiss', '1' ), 'anwp_pg_welcome_dismiss' );
+		?>
+		<div class="notice notice-info">
+			<p>
+				<strong>
+					<?php
+					/* translators: %s: plugin version */
+					echo esc_html( sprintf( __( 'AnWP Post Grid %s', 'anwp-post-grid' ), self::VERSION ) );
+					?>
+				</strong>
+				-
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=anwp-post-grid#pg-welcome-news' ) ); ?>"><?php echo esc_html__( 'See what\'s new', 'anwp-post-grid' ); ?></a>
+				|
+				<a href="<?php echo esc_url( $dismiss_url ); ?>"><?php echo esc_html__( 'Dismiss', 'anwp-post-grid' ); ?></a>
+			</p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Dismiss the "what's new" notice (nonce-checked link).
+	 *
+	 * @since 1.4.0
+	 */
+	public function dismiss_update_notice() {
+
+		if ( ! isset( $_GET['anwp_pg_welcome_dismiss'] ) || ! current_user_can( 'manage_options' ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+			return;
+		}
+
+		check_admin_referer( 'anwp_pg_welcome_dismiss' );
+
+		update_option( 'anwp_pg_welcome_version', self::VERSION, false );
+
+		wp_safe_redirect( remove_query_arg( [ 'anwp_pg_welcome_dismiss', '_wpnonce' ] ) );
+		exit;
 	}
 
 	/**
@@ -772,6 +999,9 @@ final class AnWP_Post_Grid {
 		if ( ! get_option( 'anwp_pg_elementor_do_activation_redirect', false ) ) {
 			add_option( 'anwp_pg_elementor_do_activation_redirect', true );
 		}
+
+		// A fresh install lands on the Welcome page, so no "what's new" notice.
+		add_option( 'anwp_pg_welcome_version', self::VERSION, '', false );
 	}
 
 	/**

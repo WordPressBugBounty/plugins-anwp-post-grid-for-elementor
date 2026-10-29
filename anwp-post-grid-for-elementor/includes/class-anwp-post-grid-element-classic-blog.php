@@ -29,6 +29,15 @@ class AnWP_Post_Grid_Element_Classic_Blog extends Widget_Base {
 	}
 
 	/**
+	 * Single wrapper under Optimized Markup, the legacy inner container otherwise.
+	 *
+	 * @return bool
+	 */
+	public function has_widget_inner_wrapper(): bool {
+		return ! \Elementor\Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
+	/**
 	 * Get widget title.
 	 *
 	 * @return string Widget title.
@@ -83,7 +92,7 @@ class AnWP_Post_Grid_Element_Classic_Blog extends Widget_Base {
 	 * @since  0.1.0
 	 * @access protected
 	 */
-	protected function register_controls() { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	protected function register_controls() {
 
 		/**
 		 * Before start of controls.

@@ -2,12 +2,13 @@
 /**
  * Plugin Name: AnWP Post Grid and Post Carousel Slider for Elementor
  * Plugin URI:  https://anwppro.userecho.com/communities/50-anwp-post-grid-for-elementor
- * Description: Easily create awesome post grids and post carousel sliders. Different widget types, powerful filters, "load more" button and many customizable options.
- * Version:     1.3.4
+ * Description: 8 post grid and post carousel slider widgets for Elementor. Filter by category, tag or author, with load more and pagination.
+ * Version:     1.4.0
  * Author:      Andrei Strekozov <anwppro>
  * Author URI:  https://anwp.pro
  * License:     GPLv2+
- * Requires PHP: 5.6
+ * Requires PHP: 7.4
+ * Requires Plugins: elementor
  * Text Domain: anwp-post-grid
  * Domain Path: /languages
  * Elementor tested up to: 4.3
@@ -40,10 +41,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Oldest premium release that talks to the REST routes registered by this version.
-define( 'ANWP_POST_GRID_MIN_PREMIUM_VERSION', '1.0.5' );
+define( 'ANWP_POST_GRID_MIN_PREMIUM_VERSION', '1.1.0' );
 
 // Check for required PHP version
-if ( version_compare( PHP_VERSION, '5.6', '<' ) ) {
+if ( version_compare( PHP_VERSION, '7.4', '<' ) ) {
 
 	add_action( 'admin_notices', 'anwp_post_grid_requirements_not_met_notice' );
 
@@ -83,9 +84,9 @@ function anwp_post_grid_requirements_not_met_notice() {
 
 	$details = '';
 
-	if ( version_compare( PHP_VERSION, '5.6', '<' ) ) {
+	if ( version_compare( PHP_VERSION, '7.4', '<' ) ) {
 		/* translators: %s minimum PHP version */
-		$details .= '<small>' . sprintf( esc_html__( 'AnWP Post Grid cannot run on PHP versions older than %s. Please contact your hosting provider to update your site.', 'anwp-post-grid' ), '5.6.0' ) . '</small><br />';
+		$details .= '<small>' . sprintf( esc_html__( 'AnWP Post Grid cannot run on PHP versions older than %s. Please contact your hosting provider to update your site.', 'anwp-post-grid' ), '7.4.0' ) . '</small><br />';
 	}
 
 	// Output errors.
@@ -99,9 +100,8 @@ function anwp_post_grid_requirements_not_met_notice() {
 /**
  * Adds a notice to the dashboard if the installed Premium add-on is too old.
  *
- * Premium builds its requests from the rest_url localized here; releases
- * before ANWP_POST_GRID_MIN_PREMIUM_VERSION still call the removed admin-ajax
- * handlers, so their widgets render but stop responding.
+ * Core and Premium are released and tested as a pair; a Premium older than
+ * ANWP_POST_GRID_MIN_PREMIUM_VERSION misses the fixes and widgets built for this core.
  *
  * @since  1.3.4
  * @return void
@@ -117,7 +117,7 @@ function anwp_post_grid_premium_outdated_notice() {
 			<?php
 			printf(
 				/* translators: 1: installed premium version, 2: minimum required premium version */
-				esc_html__( 'AnWP Post Grid: the Premium add-on (version %1$s) is outdated - version %2$s or higher is required. Until it is updated, premium filters, pagination and "load more" will not work.', 'anwp-post-grid' ),
+				esc_html__( 'AnWP Post Grid: the Premium add-on (version %1$s) is outdated - version %2$s or higher is required. Update it too - both plugins are released and tested together.', 'anwp-post-grid' ),
 				esc_html( ANWP_POST_GRID_PREMIUM_VERSION ),
 				esc_html( ANWP_POST_GRID_MIN_PREMIUM_VERSION )
 			);

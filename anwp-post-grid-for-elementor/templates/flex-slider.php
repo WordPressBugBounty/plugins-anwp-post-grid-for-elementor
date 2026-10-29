@@ -53,7 +53,7 @@ $spacing_between = ( ! empty( $data->spacing_between['size'] ) && $data->spacing
 
 	<!-- Slider main container -->
 	<div
-		class="anwp-pg-flex-slider anwp-pg-swiper-wrapper position-relative swiper swiper-container anwp-pg-no-transform"
+		class="anwp-pg-flex-slider anwp-pg-swiper-wrapper position-relative swiper anwp-pg-no-transform"
 		data-pg-autoplay="<?php echo esc_attr( $data->autoplay ); ?>"
 		data-pg-autoplay-delay="<?php echo esc_attr( $data->autoplay_delay ); ?>"
 		data-pg-space-between="<?php echo esc_attr( $spacing_between ); ?>"
@@ -80,13 +80,13 @@ $spacing_between = ( ! empty( $data->spacing_between['size'] ) && $data->spacing
 			<?php if ( in_array( $data->navigation, [ 'arrows', 'both' ], true ) ) : ?>
 				<div class="elementor-swiper-button elementor-swiper-button-prev">
 					<svg class="anwp-pg-icon anwp-pg-icon--feather anwp-pg-icon--s28">
-						<use xlink:href="#icon-anwp-pg-chevron-left"></use>
+						<use href="#icon-anwp-pg-chevron-left"></use>
 					</svg>
 					<span class="elementor-screen-only"><?php esc_html_e( 'Previous', 'anwp-post-grid' ); ?></span>
 				</div>
 				<div class="elementor-swiper-button elementor-swiper-button-next">
 					<svg class="anwp-pg-icon anwp-pg-icon--feather anwp-pg-icon--s28">
-						<use xlink:href="#icon-anwp-pg-chevron-right"></use>
+						<use href="#icon-anwp-pg-chevron-right"></use>
 					</svg>
 					<span class="elementor-screen-only"><?php esc_html_e( 'Next', 'anwp-post-grid' ); ?></span>
 				</div>

@@ -54,6 +54,9 @@ if ( empty( $wp_post->ID ) ) {
 // Post Format
 $post_format = get_post_format( $wp_post );
 
+// Custom Post Icon (takes the corner over the post format icon)
+$post_icon = 'yes' === $data->show_post_icon ? anwp_post_grid()->settings->get_post_icon( $wp_post->ID ) : '';
+
 // Wrapper Classes
 $wrapper_classes = $data->wrapper_classes ? $data->wrapper_classes : anwp_post_grid()->elements->get_teaser_grid_classes( $data, 3, 2, 1 );
 
@@ -107,18 +110,18 @@ $open_link_in_new_tab = AnWP_Post_Grid::string_to_bool( AnWP_Post_Grid_Settings:
 		| Post Format Icon
 		|--------------------------------------------------------------------
 		*/
-		if ( in_array( $post_format, [ 'video', 'gallery' ], true ) ) :
+		if ( ! $post_icon && in_array( $post_format, [ 'video', 'gallery' ], true ) ) :
 			?>
 			<div class="anwp-pg-post-teaser__format-icon anwp-pg-post-teaser__format-icon--top d-flex align-items-center justify-content-center">
 				<svg class="anwp-pg-icon anwp-pg-icon--s18 anwp-pg-icon--white">
-					<use xlink:href="#icon-anwp-pg-<?php echo esc_attr( 'video' === $post_format ? 'play' : 'device-camera' ); ?>"></use>
+					<use href="#icon-anwp-pg-<?php echo esc_attr( 'video' === $post_format ? 'play' : 'device-camera' ); ?>"></use>
 				</svg>
 			</div>
 		<?php endif; ?>
 
-		<?php if ( 'yes' === $data->show_post_icon && anwp_post_grid()->settings->get_post_icon( $wp_post->ID ) ) : ?>
+		<?php if ( $post_icon ) : ?>
 			<div class="anwp-pg-post-teaser__format-icon d-flex align-items-center justify-content-center">
-				<img loading="lazy" class="anwp-object-contain" src="<?php echo esc_url( anwp_post_grid()->settings->get_post_icon( $wp_post->ID ) ); ?>" alt="post format icon">
+				<img loading="lazy" class="anwp-object-contain" src="<?php echo esc_url( $post_icon ); ?>" alt="post format icon">
 			</div>
 		<?php endif; ?>
 
@@ -150,7 +153,7 @@ $open_link_in_new_tab = AnWP_Post_Grid::string_to_bool( AnWP_Post_Grid_Settings:
 			<?php if ( 'yes' === $data->show_date ) : ?>
 				<div class="anwp-pg-post-teaser__bottom-meta-item d-flex align-items-center mr-3">
 					<svg class="anwp-pg-icon anwp-pg-icon--s16 mr-1">
-						<use xlink:href="#icon-anwp-pg-calendar"></use>
+						<use href="#icon-anwp-pg-calendar"></use>
 					</svg>
 					<span class="posted-on m-0"><?php echo anwp_post_grid()->elements->get_post_date( $wp_post->ID ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 				</div>
@@ -162,7 +165,7 @@ $open_link_in_new_tab = AnWP_Post_Grid::string_to_bool( AnWP_Post_Grid_Settings:
 					?>
 					<div class="anwp-pg-post-teaser__bottom-meta-item d-flex align-items-center mr-3">
 						<svg class="anwp-pg-icon anwp-pg-icon--s16 mr-1">
-							<use xlink:href="#icon-anwp-pg-comment-discussion"></use>
+							<use href="#icon-anwp-pg-comment-discussion"></use>
 						</svg>
 						<?php echo intval( get_comments_number( $wp_post->ID ) ); ?>
 					</div>
@@ -173,7 +176,7 @@ $open_link_in_new_tab = AnWP_Post_Grid::string_to_bool( AnWP_Post_Grid_Settings:
 					?>
 					<div class="anwp-pg-post-teaser__bottom-meta-item d-flex align-items-center">
 						<svg class="anwp-pg-icon anwp-pg-icon--s16 mr-1">
-							<use xlink:href="#icon-anwp-pg-eye"></use>
+							<use href="#icon-anwp-pg-eye"></use>
 						</svg>
 						<?php echo intval( pvc_get_post_views( $wp_post->ID ) ); ?>
 					</div>
@@ -185,7 +188,7 @@ $open_link_in_new_tab = AnWP_Post_Grid::string_to_bool( AnWP_Post_Grid_Settings:
 			<?php if ( 'yes' === $data->show_author ) : ?>
 				<div class="anwp-pg-post-teaser__bottom-meta-item d-flex align-items-center">
 					<svg class="anwp-pg-icon anwp-pg-icon--s16 mr-2">
-						<use xlink:href="#icon-anwp-pg-person"></use>
+						<use href="#icon-anwp-pg-person"></use>
 					</svg>
 					<?php the_author_meta( 'display_name', $wp_post->post_author ); ?>
 				</div>

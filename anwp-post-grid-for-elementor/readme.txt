@@ -1,74 +1,81 @@
 === AnWP Post Grid and Post Carousel Slider for Elementor ===
 Contributors:      anwppro
 Donate link:       https://anwp.pro
-Tags:              post grid, post slider, post carousel, posts grid, elementor, elementor addons, elementor widget, elementor page builder, grid, load more
+Tags:              post grid, post slider, post carousel, posts grid, elementor
 Requires at least: 5.3
-Requires PHP:      5.6
+Requires PHP:      7.4
 Tested up to:      7.1
-Stable tag:        1.3.4
+Stable tag:        1.4.0
 License:           GPLv2 or later
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 
-Easily create awesome post grids and post carousel sliders. Different widget types, powerful filters, "load more" button and many customizable options.
+8 post grid and post carousel slider widgets for Elementor. Filter by category, tag or author, with load more and pagination.
 
 == Description ==
-Easily create awesome post grids. Different widget types, powerful filters, "load more" and many customizable options.
-
-The plugin adds 7 new widgets to the Elementor Page Builder: Simple Grid, Light Grid, Classic Grid, Simple Slider, Hero Block and Classic Slider.
+AnWP Post Grid adds 8 post grid and post carousel slider widgets to Elementor. Pick the posts, pick a layout and style the cards, all in the Elementor panel. Columns, slides and card height follow your Elementor breakpoints, so the live page looks like the editor preview on every device.
 
 https://www.youtube.com/watch?v=yOBSJGqJU7E
 
-= BASIC FEATURES =
-&#9989; 5 grid and 2 slider widget types
-&#9989; powerful filters (by category, by tag, by author, by post id, by post format, most commented, latest, oldest and others)
-&#9989; pagination and "load more" button in post grid
-&#9989; category color option
-&#9989; many customizable options
-&#9989; fully responsive and mobile friendly (custom number of grid columns for desktop, tablet and mobile)
-&#9989; works with most themes out of the box
-&#9989; template system (ability to override output layouts in your theme)
-&#9989; RTL support
+= Free widgets =
+* **Simple Grid**: image cards in a responsive grid - card styles, hover effects, load more and pagination.
+* **Light Grid**: a compact grid - a small thumbnail beside each title and its meta, with load more and pagination.
+* **Classic Grid**: the classic blog card - image, title, excerpt and meta, with load more and pagination.
+* **Classic Blog**: a blog list with the image beside the excerpt, load more and pagination.
+* **Hero Block**: one large featured post with smaller ones beside it - a front-page header.
+* **Simple Slider**: an image card carousel with autoplay, loop, arrows and dots.
+* **Classic Slider**: Classic Grid cards as a carousel - excerpt, autoplay, slide or fade.
+* **Flex Slider**: a free-mode carousel - drag through the cards, with autoplay, arrows and dots.
 
-= LINKS AND DOCUMENTATION =
+= Features =
+* Choose posts by category, tag, author, post format or post ID, or show related posts. Exclude posts, categories or authors, and limit to posts from the last N days.
+* Sort by latest or oldest (published or modified), title, most commented, or most viewed (with the free Post Views Counter plugin).
+* "Load more" button and pagination on 4 grid widgets.
+* Custom post types: any public post type, with its own image field.
+* Category colors for the category badges (background and text).
+* Post icons: show an icon on posts of a category, tag or post format.
+* Columns, slides and card height per device, following your Elementor breakpoints (custom widths too). Columns and slides also take their own values on extra devices like Laptop or Tablet Extra.
+* Template system: override any layout from your theme.
+* Works with most themes out of the box. RTL support.
 
-[Demo Site](https://grid.anwp.pro/)
-[Online Documentation & Community Portal](https://anwppro.userecho.com/communities/50-anwp-post-grid-for-elementor)
-[Changelog](https://anwppro.userecho.com/knowledge-bases/52-anwp-post-grid-for-elementor-changelog/categories/131-basic-version/articles)
+= AnWP Post Grid Premium =
+Premium is an add-on: install it next to this plugin and you get 8 more widgets and 5 more features, with all 8 free widgets still there. The Premium widgets work like the free ones - the same "Posts to Show", category, tag, author and related-posts options, the same Elementor breakpoints - and they show up in the panel when you search "anwp".
 
-[Premium Demo](https://grid.anwp.pro/premium-demo/)
+**8 more widgets**
 
-= PREMIUM FEATURES =
-&#128310; Parallax Grid Widget (NEW!)
-&#128310; Simple Ratio Grid Widget (NEW!)
-&#128310; Scale Grid Widget
-&#128310; News Ticker Widget
-&#128310; Hero Slider Widget
-&#128310; Mosaic Slider Widget
-&#128310; Card Slider Widget
-&#128310; Custom Taxonomy support (NEW!)
-&#128310; Advanced Pagination
-&#128310; Taxonomy Redirects
-&#128310; Header Category Filter
-&#128310; Widget Blocks
+* **Hex Grid** (NEW in Premium 1.1.0): posts as interlocking hexagon tiles - responsive columns, load more, pagination and the header filter.
+* **News Ticker**: a breaking-news headline bar - a continuous marquee, or one post at a time sliding sideways or up.
+* **Card Slider**: a card carousel with hover effects and autoplay.
+* **Hero Slider**: a full-width slider with a Ken Burns effect and post navigation.
+* **Mosaic Slider**: tall cards and stacked pairs mixed into a sliding mosaic, in 3 styles.
+* **Scale Grid**: the post under the mouse grows and shows its excerpt - the others stay grayscale.
+* **Simple Ratio Grid**: cards locked to the image aspect ratio you pick, with load more and pagination.
+* **Parallax Grid**: 3D tilt cards that follow the mouse, with a moving highlight and shadow.
 
-[Get Premium Version](https://anwp.pro/anwp-post-grid-for-elementor-premium/)
+**5 more features**
 
-= The plugin requires =
-> PHP version 5.6 or greater
-> WordPress 4.7 or greater
-> [Elementor](https://wordpress.org/plugins/elementor/ "Elementor")
+* **Header Category Filter**: category tabs above a grid - visitors switch categories without a page reload. Works on Simple Grid, Light Grid, Classic Grid, Classic Blog, Hex Grid and Simple Ratio Grid, and tabs that don't fit fold into a "more" menu.
+* **Advanced Pagination**: page numbers with previous / next buttons, ellipsis and your own labels, on the 4 free grids and Hex Grid.
+* **Custom Taxonomy**: filter any of the 16 widgets by terms from a custom taxonomy, not only categories and tags - and show those terms in place of the category label.
+* **Taxonomy Redirects**: send a category or tag archive to a page of your choice (301).
+* **Widget Blocks**: design a block with Elementor and show it in any sidebar or footer widget area.
 
-= Minimum Requirements =
+Every plan covers 3 sites and comes with a 7-day free trial and a 14-day refund guarantee. Screenshots, plans and prices: [AnWP Post Grid Premium widgets](https://anwp.pro/anwp-post-grid-for-elementor-premium/). Try them live on the [Premium demo site](https://grid.anwp.pro/premium-demo/).
 
-* PHP version 5.6 or greater (PHP 7.0 or greater is recommended)
-* WordPress 4.7+
+= Links and documentation =
+* [Demo site](https://grid.anwp.pro/)
+* [Documentation and community forum](https://anwppro.userecho.com/communities/50-anwp-post-grid-for-elementor)
+* [Changelog](https://anwppro.userecho.com/knowledge-bases/52-anwp-post-grid-for-elementor-changelog/categories/131-basic-version/articles)
 
-= Installation =
-1. Go to Plugins >> Add new
-1. Type "AnWP Post Grid for Elementor" in Search Plugins box.
-1. Click Install Now to install the "AnWP Post Grid for Elementor".
-1. If successful, click Activate Plugin to activate it.
-1. Install required Elementor plugin. [Elementor](https://wordpress.org/plugins/elementor/ "Elementor")
+= Requirements =
+* WordPress 5.3 or newer
+* PHP 7.4 or newer
+* [Elementor](https://wordpress.org/plugins/elementor/) 3.5.0 or newer
+
+== Installation ==
+1. Install and activate [Elementor](https://wordpress.org/plugins/elementor/), if you haven't yet.
+1. Go to Plugins > Add New Plugin and search for "AnWP Post Grid".
+1. Click Install Now, then Activate.
+1. Open a page with Elementor, type "anwp" in the widget search box and drag a widget onto the page.
 
 == Frequently Asked Questions ==
 
@@ -76,9 +83,25 @@ https://www.youtube.com/watch?v=yOBSJGqJU7E
 
 Yes! The plugin works with most themes out of the box. If you have any CSS styling issues feel free to ask for help.
 
-= How to disable Elementor column gap =
+= Does it work with Elementor 4? =
 
-Click on "Edit Sections" icon. Then set "Columns Gap" option to "No Gap".
+Yes. AnWP Post Grid is tested with Elementor 4.3 and needs Elementor 3.5.0 or newer. Its widgets are regular Elementor widgets: type "anwp" in the widget search box to find them.
+
+= Can I show custom post types? =
+
+Yes, any public post type. Go to AnWP Post Grid > Settings > Custom Post Type (CPT), click "Add CPT", then pick the post type and the meta field that holds its image (an image ID or URL - most post types use `_thumbnail_id`, the featured image). The post type then shows up in each widget's "Source" option.
+
+= Can I change the widget HTML? =
+
+Yes. Copy a file from `wp-content/plugins/anwp-post-grid-for-elementor/templates/` to `yourtheme/anwp-post-grid/`, keep the same subfolder (for example `teaser/teaser--a.php`) and edit the copy. A child theme works too. Your copy survives plugin updates, but check the changelog after an update in case the original template changed.
+
+= Do I need this plugin to use Premium? =
+
+Yes. Premium adds widgets and features to AnWP Post Grid, so both need to be installed and active. Update them together: Premium 1.1.0 needs AnWP Post Grid 1.4.0 or newer, and wp-admin shows a notice if one of them is too old for the other.
+
+= How do I remove the space around the grid? =
+
+The space comes from the Elementor layout around the widget, not from the widget. In a container, select it and set Advanced > Layout > Padding to 0 (the default for every container is in Site Settings > Layout > Container Padding). In an older section, set Layout > Columns Gap to "No Gap".
 
 = "Load more", pagination or the header filter don't work for visitors =
 
@@ -86,14 +109,33 @@ These features load posts through the WordPress REST API, under the `anwp-pg/v1`
 
 == Screenshots ==
 
-1. Simple Grid Layout
-2. Light Grid Layout
-3. Classic Grid Layout
-4. Query Options
-5. Style Options
-
+1. Simple Grid - image cards in a responsive grid, with load more and pagination
+2. Classic Grid - image, title, meta and excerpt on every card
+3. Hero Block - one large featured post with smaller ones beside it
+4. Classic Blog - a blog list with the image beside the excerpt
+5. Flex Slider - a drag-through carousel with autoplay, arrows and dots (one of 3 free sliders)
+6. Type "anwp" in the Elementor panel to find the 8 free widgets - tiles marked PRO need the separate Premium plugin
+7. Query options - filter by category, tag, author or post format, exclude posts, set an offset or show only recent posts
+8. Premium (separate plugin): Hex Grid - posts as interlocking hexagon tiles
 
 == Changelog ==
+
+= 1.4.0 - 2026-10-29 =
+* important: if you use AnWP Post Grid Premium, update it to 1.1.0 at the same time
+* important: requires PHP 7.4 or higher (was 5.6) and Elementor 3.5.0 or higher (was 3.1.0) - WordPress keeps sites on older PHP on 1.3.4
+* changed: grid columns, slides and card height now follow your Elementor breakpoints (Site Settings > Layout > Breakpoints), including custom widths - columns and slides also take their own values on extra devices like Laptop or Tablet Extra
+* changed: with the default breakpoints, screens 576-767px wide now use the Mobile value (was Tablet), and 769-1024px sliders and 992-1024px grids use Tablet (was Desktop) - the page now matches the editor preview
+* changed: with Elementor's Optimized Markup on, widgets no longer print the inner "elementor-widget-container" box (same as Elementor's own widgets) - custom CSS that targets it needs updating
+* fixed: card height now applies exactly as typed - values off the 10px step (like 255) or under 150 were ignored before (Classic Grid and Classic Slider keep their 150px minimum)
+* fixed: in the Elementor editor, an untouched grid or slider showed its Desktop columns on Tablet and Mobile
+* note: theme copies of the plugin templates (yourtheme/anwp-post-grid/) keep working and follow the new breakpoints, even if they hardcode column classes
+* changed: "Published in Last days" now filters posts in every "Posts to Show" order except Custom (before, it only worked with Oldest, Most commented and Most viewed)
+* fixed: Classic Grid showed the video/gallery icon and the custom post icon on top of each other - the custom post icon now wins
+* fixed: Light Grid "Post Card Background Color on Hover" had no effect with Style F
+* fixed: Simple, Light and Classic Grid and Classic Blog with "load more" crashed on PHP 8 when the "Posts Offset" field was left empty
+* improved: readable (unminified) copy of the settings page script and its source code are now included
+* improved: the post ID selector in the Elementor editor uses the browser's native dialog (removed the Modaal library)
+* improved: new Welcome page (AnWP Post Grid > Welcome) - all 16 widgets with screenshots and demo links, a quick start and what's new. After a feature update (like 1.4 to 1.5), a one-time notice links to it
 
 = 1.3.4 - 2026-10-17 =
 * important: if you use AnWP Post Grid Premium, update it to 1.0.5 at the same time - older Premium versions lose "load more" and pagination in Premium widgets

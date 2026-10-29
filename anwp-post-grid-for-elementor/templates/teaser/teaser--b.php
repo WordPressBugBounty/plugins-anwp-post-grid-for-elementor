@@ -100,7 +100,7 @@ $open_link_in_new_tab = AnWP_Post_Grid::string_to_bool( AnWP_Post_Grid_Settings:
 						?>
 						<span class="anwp-pg-post-teaser__meta-comments d-flex align-items-center mr-2">
 						<svg class="anwp-pg-icon anwp-pg-icon--s1em anwp-pg-icon--white mr-1">
-							<use xlink:href="#icon-anwp-pg-comment-discussion"></use>
+							<use href="#icon-anwp-pg-comment-discussion"></use>
 						</svg>
 						<?php echo intval( get_comments_number( $wp_post->ID ) ); ?></span>
 						<?php
@@ -110,7 +110,7 @@ $open_link_in_new_tab = AnWP_Post_Grid::string_to_bool( AnWP_Post_Grid_Settings:
 						?>
 						<span class="anwp-pg-post-teaser__meta-views d-flex align-items-center mr-2">
 							<svg class="anwp-pg-icon anwp-pg-icon--s1em anwp-pg-icon--white mr-1">
-								<use xlink:href="#icon-anwp-pg-eye"></use>
+								<use href="#icon-anwp-pg-eye"></use>
 							</svg>
 						<?php echo intval( pvc_get_post_views( $wp_post->ID ) ); ?>
 						</span>

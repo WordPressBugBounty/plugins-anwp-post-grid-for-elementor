@@ -28,6 +28,15 @@ class AnWP_Post_Grid_Element_Hero_Block extends Widget_Base {
 	}
 
 	/**
+	 * Single wrapper under Optimized Markup, the legacy inner container otherwise.
+	 *
+	 * @return bool
+	 */
+	public function has_widget_inner_wrapper(): bool {
+		return ! \Elementor\Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
+	}
+
+	/**
 	 * Get widget title.
 	 *
 	 * @return string Widget title.
@@ -82,7 +91,7 @@ class AnWP_Post_Grid_Element_Hero_Block extends Widget_Base {
 	 * @since  0.1.0
 	 * @access protected
 	 */
-	protected function register_controls() { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	protected function register_controls() {
 
 		/**
 		 * Before start of controls.
@@ -96,7 +105,7 @@ class AnWP_Post_Grid_Element_Hero_Block extends Widget_Base {
 		/**
 		 * Load Section - Query
 		 *
-		 * @param AnWP_Post_Grid_Element_Classic_Blog $this The element.
+		 * @param AnWP_Post_Grid_Element_Hero_Block $this The element.
 		 *
 		 * @since 0.8.3
 		 */
@@ -288,6 +297,9 @@ class AnWP_Post_Grid_Element_Hero_Block extends Widget_Base {
 				'desktop_default' => [
 					'unit' => 'px',
 					'size' => 180,
+				],
+				'selectors'       => [
+					'{{WRAPPER}} .anwp-pg-wrap' => '--anwp-pg-card-h: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);

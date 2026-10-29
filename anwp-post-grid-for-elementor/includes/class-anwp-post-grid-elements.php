@@ -16,6 +16,14 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 class AnWP_Post_Grid_Elements {
 
 	/**
+	 * Demo sites, the fallback for an empty registry demo_url.
+	 *
+	 * @since 1.4.0
+	 */
+	const DEMO_URL         = 'https://grid.anwp.pro/';
+	const PREMIUM_DEMO_URL = 'https://grid.anwp.pro/premium-demo/';
+
+	/**
 	 * Parent plugin class.
 	 *
 	 * @var AnWP_Post_Grid
@@ -67,11 +75,7 @@ class AnWP_Post_Grid_Elements {
 	 */
 	public function hooks() {
 
-		if ( ( defined( 'ELEMENTOR_VERSION' ) && version_compare( ELEMENTOR_VERSION, '3.5.0', '>=' ) ) ) {
-			add_action( 'elementor/widgets/register', [ $this, 'init_widgets' ] );
-		} else {
-			add_action( 'elementor/widgets/widgets_registered', [ $this, 'init_widgets' ] );
-		}
+		add_action( 'elementor/widgets/register', [ $this, 'init_widgets' ] );
 
 		// Add Plugin actions
 		add_filter( 'elementor/editor/localize_settings', [ $this, 'promote_premium_widgets' ] );
@@ -633,26 +637,278 @@ class AnWP_Post_Grid_Elements {
 	}
 
 	public function get_pro_tab_template() {
+
+		$titles = array_merge(
+			wp_list_pluck( wp_list_filter( $this->get_widgets_registry(), [ 'pro' => true ] ), 'title' ),
+			wp_list_pluck( $this->get_premium_features(), 'title' )
+		);
+
 		ob_start();
 		?>
 		<div class="elementor-nerd-box">
-			<div class="elementor-nerd-box-title" style="margin-top: 0 !important;">Premium Features</div>
+			<div class="elementor-nerd-box-title" style="margin-top: 0 !important;"><?php echo esc_html__( 'Premium Features', 'anwp-post-grid' ); ?></div>
 			<ul style="margin-top: 15px;">
-				<li>News Ticker Widget</li>
-				<li>Hero Slider</li>
-				<li>Mosaic Slider</li>
-				<li>Card Slider</li>
-				<li>Advanced Pagination</li>
-				<li>Taxonomy Redirects</li>
-				<li>Header Category Filter</li>
-				<li>Widget Blocks</li>
+				<?php foreach ( $titles as $title ) : ?>
+					<li><?php echo esc_html( $title ); ?></li>
+				<?php endforeach; ?>
 			</ul>
-			<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-button-go-pro" href="https://grid.anwp.pro/premium-demo/" target="_blank">
+			<a class="elementor-nerd-box-link elementor-button elementor-button-default elementor-button-go-pro" href="<?php echo esc_url( self::PREMIUM_DEMO_URL ); ?>" target="_blank">
 				<?php echo esc_html__( 'Premium Demo', 'anwp-post-grid' ); ?>
 			</a>
 		</div>
 		<?php
 		return ob_get_clean();
+	}
+
+	/**
+	 * All 16 Post Grid widgets, Premium first (Hex Grid leads), then free.
+	 * Feeds the Welcome page, the Elementor promo tiles and the "Premium Features" nerd box.
+	 *
+	 * Row: slug (Elementor widget name), title, desc, image (file in admin/img/welcome/),
+	 * demo_url (an empty one falls back to the free or premium demo site), pro, new,
+	 * promo_icon (icon classes of the locked promo tile, PRO rows only).
+	 *
+	 * @return array
+	 * @since 1.4.0
+	 */
+	public function get_widgets_registry() {
+
+		$rows = [
+			[
+				'slug'       => 'anwp-pg-pro-hex-grid',
+				'title'      => __( 'Hex Grid', 'anwp-post-grid' ),
+				'desc'       => __( 'Posts as interlocking hexagon tiles - responsive columns, load more, pagination and the header filter.', 'anwp-post-grid' ),
+				'image'      => 'hex-grid.webp',
+				'demo_url'   => '',
+				'pro'        => true,
+				'new'        => true,
+				'promo_icon' => 'anwp-pg-pro-promotion-icon anwp-pg-pro-hex-grid__admin-icon',
+			],
+			[
+				'slug'       => 'anwp-pg-pro-news-ticker',
+				'title'      => __( 'News Ticker', 'anwp-post-grid' ),
+				'desc'       => __( 'A breaking-news headline bar - a continuous marquee, or one post at a time sliding sideways or up.', 'anwp-post-grid' ),
+				'image'      => 'news-ticker.webp',
+				'demo_url'   => '',
+				'pro'        => true,
+				'new'        => false,
+				'promo_icon' => 'anwp-pg-pro-promotion-icon anwp-pg-pro-news-ticker__admin-icon',
+			],
+			[
+				'slug'       => 'anwp-pg-pro-card-slider',
+				'title'      => __( 'Card Slider', 'anwp-post-grid' ),
+				'desc'       => __( 'A card carousel with hover effects and autoplay.', 'anwp-post-grid' ),
+				'image'      => 'card-slider.webp',
+				'demo_url'   => '',
+				'pro'        => true,
+				'new'        => false,
+				'promo_icon' => 'anwp-pg-pro-promotion-icon anwp-pg-simple-slider__admin-icon',
+			],
+			[
+				'slug'       => 'anwp-pg-pro-hero-slider',
+				'title'      => __( 'Hero Slider', 'anwp-post-grid' ),
+				'desc'       => __( 'A full-width slider with a Ken Burns effect and post navigation.', 'anwp-post-grid' ),
+				'image'      => 'hero-slider.webp',
+				'demo_url'   => '',
+				'pro'        => true,
+				'new'        => false,
+				'promo_icon' => 'anwp-pg-pro-promotion-icon anwp-pg-simple-slider__admin-icon',
+			],
+			[
+				'slug'       => 'anwp-pg-pro-mosaic-slider',
+				'title'      => __( 'Mosaic Slider', 'anwp-post-grid' ),
+				'desc'       => __( 'Tall cards and stacked pairs mixed into a sliding mosaic, in 3 styles.', 'anwp-post-grid' ),
+				'image'      => 'mosaic-slider.webp',
+				'demo_url'   => '',
+				'pro'        => true,
+				'new'        => false,
+				'promo_icon' => 'anwp-pg-pro-promotion-icon anwp-pg-simple-slider__admin-icon',
+			],
+			[
+				'slug'       => 'anwp-pg-pro-zooming-grid',
+				'title'      => __( 'Scale Grid', 'anwp-post-grid' ),
+				'desc'       => __( 'The post under the mouse grows and shows its excerpt - the others stay grayscale.', 'anwp-post-grid' ),
+				'image'      => 'zooming-grid.webp',
+				'demo_url'   => '',
+				'pro'        => true,
+				'new'        => false,
+				'promo_icon' => 'anwp-pg-pro-promotion-icon anwp-pg-pro-news-ticker__admin-icon',
+			],
+			[
+				'slug'       => 'anwp-pg-pro-simple-ratio-grid',
+				'title'      => __( 'Simple Ratio Grid', 'anwp-post-grid' ),
+				'desc'       => __( 'Cards locked to the image aspect ratio you pick, with load more and pagination.', 'anwp-post-grid' ),
+				'image'      => 'simple-ratio-grid.webp',
+				'demo_url'   => '',
+				'pro'        => true,
+				'new'        => false,
+				'promo_icon' => 'anwp-pg-pro-promotion-icon anwp-pg-pro-news-ticker__admin-icon',
+			],
+			[
+				'slug'       => 'anwp-pg-pro-parallax-grid',
+				'title'      => __( 'Parallax Grid', 'anwp-post-grid' ),
+				'desc'       => __( '3D tilt cards that follow the mouse, with a moving highlight and shadow.', 'anwp-post-grid' ),
+				'image'      => 'parallax-grid.webp',
+				'demo_url'   => '',
+				'pro'        => true,
+				'new'        => false,
+				'promo_icon' => 'anwp-pg-pro-promotion-icon anwp-pg-pro-news-ticker__admin-icon',
+			],
+			[
+				'slug'       => 'anwp-pg-simple-grid',
+				'title'      => __( 'Simple Grid', 'anwp-post-grid' ),
+				'desc'       => __( 'Image cards in a responsive grid - card styles, hover effects, load more and pagination.', 'anwp-post-grid' ),
+				'image'      => 'simple-grid.webp',
+				'demo_url'   => '',
+				'pro'        => false,
+				'new'        => false,
+				'promo_icon' => '',
+			],
+			[
+				'slug'       => 'anwp-pg-light-grid',
+				'title'      => __( 'Light Grid', 'anwp-post-grid' ),
+				'desc'       => __( 'A compact grid - a small thumbnail beside each title and its meta, with load more and pagination.', 'anwp-post-grid' ),
+				'image'      => 'light-grid.webp',
+				'demo_url'   => '',
+				'pro'        => false,
+				'new'        => false,
+				'promo_icon' => '',
+			],
+			[
+				'slug'       => 'anwp-pg-classic-grid',
+				'title'      => __( 'Classic Grid', 'anwp-post-grid' ),
+				'desc'       => __( 'The classic blog card: image, title, excerpt and meta, with load more and pagination.', 'anwp-post-grid' ),
+				'image'      => 'classic-grid.webp',
+				'demo_url'   => '',
+				'pro'        => false,
+				'new'        => false,
+				'promo_icon' => '',
+			],
+			[
+				'slug'       => 'anwp-pg-classic-blog',
+				'title'      => __( 'Classic Blog', 'anwp-post-grid' ),
+				'desc'       => __( 'A blog list with the image beside the excerpt, load more and pagination.', 'anwp-post-grid' ),
+				'image'      => 'classic-blog.webp',
+				'demo_url'   => '',
+				'pro'        => false,
+				'new'        => false,
+				'promo_icon' => '',
+			],
+			[
+				'slug'       => 'anwp-pg-hero-block',
+				'title'      => __( 'Hero Block', 'anwp-post-grid' ),
+				'desc'       => __( 'One large featured post with smaller ones beside it - a front-page header.', 'anwp-post-grid' ),
+				'image'      => 'hero-block.webp',
+				'demo_url'   => '',
+				'pro'        => false,
+				'new'        => false,
+				'promo_icon' => '',
+			],
+			[
+				'slug'       => 'anwp-pg-simple-slider',
+				'title'      => __( 'Simple Slider', 'anwp-post-grid' ),
+				'desc'       => __( 'An image card carousel with autoplay, loop, arrows and dots.', 'anwp-post-grid' ),
+				'image'      => 'simple-slider.webp',
+				'demo_url'   => '',
+				'pro'        => false,
+				'new'        => false,
+				'promo_icon' => '',
+			],
+			[
+				'slug'       => 'anwp-pg-classic-slider',
+				'title'      => __( 'Classic Slider', 'anwp-post-grid' ),
+				'desc'       => __( 'Classic Grid cards as a carousel - excerpt, autoplay, slide or fade.', 'anwp-post-grid' ),
+				'image'      => 'classic-slider.webp',
+				'demo_url'   => '',
+				'pro'        => false,
+				'new'        => false,
+				'promo_icon' => '',
+			],
+			[
+				'slug'       => 'anwp-pg-flex-slider',
+				'title'      => __( 'Flex Slider', 'anwp-post-grid' ),
+				'desc'       => __( 'A free-mode carousel: drag through the cards, with autoplay, arrows and dots.', 'anwp-post-grid' ),
+				'image'      => 'flex-slider.webp',
+				'demo_url'   => '',
+				'pro'        => false,
+				'new'        => false,
+				'promo_icon' => '',
+			],
+		];
+
+		foreach ( $rows as &$row ) {
+			if ( '' === $row['demo_url'] ) {
+				$row['demo_url'] = $row['pro'] ? self::PREMIUM_DEMO_URL : self::DEMO_URL;
+			}
+		}
+		unset( $row );
+
+		return $rows;
+	}
+
+	/**
+	 * Premium features that aren't widgets. Feeds the Welcome page and the "Premium Features" nerd box.
+	 *
+	 * Row: slug, title, desc, icon (dashicon name without the "dashicons-" prefix).
+	 *
+	 * @return array
+	 * @since 1.4.0
+	 */
+	public function get_premium_features() {
+		return [
+			[
+				'slug'  => 'header-filter',
+				'title' => __( 'Header Category Filter', 'anwp-post-grid' ),
+				'desc'  => __( 'Category tabs above a grid - visitors filter posts without a page reload.', 'anwp-post-grid' ),
+				'icon'  => 'filter',
+			],
+			[
+				'slug'  => 'advanced-pagination',
+				'title' => __( 'Advanced Pagination', 'anwp-post-grid' ),
+				'desc'  => __( 'Page numbers with previous / next, ellipsis and custom labels.', 'anwp-post-grid' ),
+				'icon'  => 'controls-forward',
+			],
+			[
+				'slug'  => 'custom-taxonomy',
+				'title' => __( 'Custom Taxonomy', 'anwp-post-grid' ),
+				'desc'  => __( 'Filter any widget by terms from a custom taxonomy, not only categories and tags.', 'anwp-post-grid' ),
+				'icon'  => 'tag',
+			],
+			[
+				'slug'  => 'taxonomy-redirects',
+				'title' => __( 'Taxonomy Redirects', 'anwp-post-grid' ),
+				'desc'  => __( 'Send a category or tag archive to a page of your choice (301).', 'anwp-post-grid' ),
+				'icon'  => 'randomize',
+			],
+			[
+				'slug'  => 'widget-blocks',
+				'title' => __( 'Widget Blocks', 'anwp-post-grid' ),
+				'desc'  => __( 'Design a block with Elementor and show it in any sidebar or footer widget area.', 'anwp-post-grid' ),
+				'icon'  => 'welcome-widgets-menus',
+			],
+		];
+	}
+
+	/**
+	 * Locked Premium widget tiles for the Elementor panel, built from the registry.
+	 *
+	 * @return array
+	 * @since 1.4.0
+	 */
+	public function get_promotion_widgets() {
+
+		$tiles = [];
+
+		foreach ( wp_list_filter( $this->get_widgets_registry(), [ 'pro' => true ] ) as $row ) {
+			$tiles[] = [
+				'name'       => $row['slug'],
+				'title'      => $row['title'] . ' [anwp]', // [anwp] is the panel search keyword
+				'icon'       => $row['promo_icon'],
+				'categories' => '[ "anwp-pg", "anwp" ]',
+			];
+		}
+
+		return $tiles;
 	}
 
 	/**
@@ -673,52 +929,7 @@ class AnWP_Post_Grid_Elements {
 			$config['promotionWidgets'] = [];
 		}
 
-		$premium_widgets = [
-			[
-				'name'       => 'anwp-pg-pro-parallax-grid',
-				'title'      => __( 'Parallax Grid', 'anwp-post-grid' ) . ' [anwp]',
-				'icon'       => 'anwp-pg-pro-promotion-icon anwp-pg-pro-news-ticker__admin-icon',
-				'categories' => '[ "anwp-pg", "anwp" ]',
-			],
-			[
-				'name'       => 'anwp-pg-pro-simple-ratio-grid',
-				'title'      => __( 'Simple Ratio Grid', 'anwp-post-grid' ) . ' [anwp]',
-				'icon'       => 'anwp-pg-pro-promotion-icon anwp-pg-pro-news-ticker__admin-icon',
-				'categories' => '[ "anwp-pg", "anwp" ]',
-			],
-			[
-				'name'       => 'anwp-pg-pro-zooming-grid',
-				'title'      => __( 'Scale Grid', 'anwp-post-grid' ) . ' [anwp]',
-				'icon'       => 'anwp-pg-pro-promotion-icon anwp-pg-pro-news-ticker__admin-icon',
-				'categories' => '[ "anwp-pg", "anwp" ]',
-			],
-			[
-				'name'       => 'anwp-pg-pro-news-ticker',
-				'title'      => __( 'News Ticker', 'anwp-post-grid' ) . ' [anwp]',
-				'icon'       => 'anwp-pg-pro-promotion-icon anwp-pg-pro-news-ticker__admin-icon',
-				'categories' => '[ "anwp-pg", "anwp" ]',
-			],
-			[
-				'name'       => 'anwp-pg-pro-hero-slider',
-				'title'      => __( 'Hero Slider', 'anwp-post-grid' ) . ' [anwp]',
-				'icon'       => 'anwp-pg-pro-promotion-icon anwp-pg-simple-slider__admin-icon',
-				'categories' => '[ "anwp-pg", "anwp" ]',
-			],
-			[
-				'name'       => 'anwp-pg-pro-mosaic-slider',
-				'title'      => __( 'Mosaic Slider', 'anwp-post-grid' ) . ' [anwp]',
-				'icon'       => 'anwp-pg-pro-promotion-icon anwp-pg-simple-slider__admin-icon',
-				'categories' => '[ "anwp-pg", "anwp" ]',
-			],
-			[
-				'name'       => 'anwp-pg-pro-card-slider',
-				'title'      => __( 'Card Slider', 'anwp-post-grid' ) . ' [anwp]',
-				'icon'       => 'anwp-pg-pro-promotion-icon anwp-pg-simple-slider__admin-icon',
-				'categories' => '[ "anwp-pg", "anwp" ]',
-			],
-		];
-
-		$config['promotionWidgets'] = array_merge( $config['promotionWidgets'], $premium_widgets );
+		$config['promotionWidgets'] = array_merge( $config['promotionWidgets'], $this->get_promotion_widgets() );
 
 		return $config;
 	}
@@ -727,105 +938,26 @@ class AnWP_Post_Grid_Elements {
 	 * Init Widgets
 	 * Include widgets files and register them
 	 *
+	 * @param \Elementor\Widgets_Manager $widgets_manager Elementor widgets manager.
+	 *
 	 * @throws Exception
 	 * @since 0.1.0
 	 */
-	public function init_widgets() {
+	public function init_widgets( $widgets_manager ) {
 
-		/*
-		|--------------------------------------------------------------------
-		| > Simple Grid
-		| @since 0.1.0
-		|--------------------------------------------------------------------
-		*/
-		if ( ( defined( 'ELEMENTOR_VERSION' ) && version_compare( ELEMENTOR_VERSION, '3.5.0', '>=' ) ) ) {
-			Plugin::instance()->widgets_manager->register( new AnWP_Post_Grid_Element_Simple_Grid() );
-		} else {
-			Plugin::instance()->widgets_manager->register_widget_type( new AnWP_Post_Grid_Element_Simple_Grid() );
-		}
+		$widgets = [
+			'AnWP_Post_Grid_Element_Simple_Grid',    // @since 0.1.0
+			'AnWP_Post_Grid_Element_Light_Grid',     // @since 0.1.0
+			'AnWP_Post_Grid_Element_Classic_Grid',   // @since 0.1.0
+			'AnWP_Post_Grid_Element_Simple_Slider',  // @since 0.6.0
+			'AnWP_Post_Grid_Element_Classic_Slider', // @since 0.6.0
+			'AnWP_Post_Grid_Element_Hero_Block',     // @since 0.6.1
+			'AnWP_Post_Grid_Element_Classic_Blog',   // @since 0.6.2
+			'AnWP_Post_Grid_Element_Flex_Slider',    // @since 0.9.0
+		];
 
-		/*
-		|--------------------------------------------------------------------
-		| > Light Grid
-		| @since 0.1.0
-		|--------------------------------------------------------------------
-		*/
-		if ( ( defined( 'ELEMENTOR_VERSION' ) && version_compare( ELEMENTOR_VERSION, '3.5.0', '>=' ) ) ) {
-			Plugin::instance()->widgets_manager->register( new AnWP_Post_Grid_Element_Light_Grid() );
-		} else {
-			Plugin::instance()->widgets_manager->register_widget_type( new AnWP_Post_Grid_Element_Light_Grid() );
-		}
-
-		/*
-		|--------------------------------------------------------------------
-		| > Classic Grid
-		| @since 0.1.0
-		|--------------------------------------------------------------------
-		*/
-		if ( ( defined( 'ELEMENTOR_VERSION' ) && version_compare( ELEMENTOR_VERSION, '3.5.0', '>=' ) ) ) {
-			Plugin::instance()->widgets_manager->register( new AnWP_Post_Grid_Element_Classic_Grid() );
-		} else {
-			Plugin::instance()->widgets_manager->register_widget_type( new AnWP_Post_Grid_Element_Classic_Grid() );
-		}
-
-		/*
-		|--------------------------------------------------------------------
-		| > Simple Slider
-		| @since 0.6.0
-		|--------------------------------------------------------------------
-		*/
-		if ( ( defined( 'ELEMENTOR_VERSION' ) && version_compare( ELEMENTOR_VERSION, '3.5.0', '>=' ) ) ) {
-			Plugin::instance()->widgets_manager->register( new AnWP_Post_Grid_Element_Simple_Slider() );
-		} else {
-			Plugin::instance()->widgets_manager->register_widget_type( new AnWP_Post_Grid_Element_Simple_Slider() );
-		}
-
-		/*
-		|--------------------------------------------------------------------
-		| > Classic Slider
-		| @since 0.6.0
-		|--------------------------------------------------------------------
-		*/
-		if ( ( defined( 'ELEMENTOR_VERSION' ) && version_compare( ELEMENTOR_VERSION, '3.5.0', '>=' ) ) ) {
-			Plugin::instance()->widgets_manager->register( new AnWP_Post_Grid_Element_Classic_Slider() );
-		} else {
-			Plugin::instance()->widgets_manager->register_widget_type( new AnWP_Post_Grid_Element_Classic_Slider() );
-		}
-
-		/*
-		|--------------------------------------------------------------------
-		| > Hero Block
-		| @since 0.6.1
-		|--------------------------------------------------------------------
-		*/
-		if ( ( defined( 'ELEMENTOR_VERSION' ) && version_compare( ELEMENTOR_VERSION, '3.5.0', '>=' ) ) ) {
-			Plugin::instance()->widgets_manager->register( new AnWP_Post_Grid_Element_Hero_Block() );
-		} else {
-			Plugin::instance()->widgets_manager->register_widget_type( new AnWP_Post_Grid_Element_Hero_Block() );
-		}
-
-		/*
-		|--------------------------------------------------------------------
-		| > Classic Blog
-		| @since 0.6.2
-		|--------------------------------------------------------------------
-		*/
-		if ( ( defined( 'ELEMENTOR_VERSION' ) && version_compare( ELEMENTOR_VERSION, '3.5.0', '>=' ) ) ) {
-			Plugin::instance()->widgets_manager->register( new AnWP_Post_Grid_Element_Classic_Blog() );
-		} else {
-			Plugin::instance()->widgets_manager->register_widget_type( new AnWP_Post_Grid_Element_Classic_Blog() );
-		}
-
-		/*
-		|--------------------------------------------------------------------
-		| > Flex Slider
-		| @since 0.9.0
-		|--------------------------------------------------------------------
-		*/
-		if ( ( defined( 'ELEMENTOR_VERSION' ) && version_compare( ELEMENTOR_VERSION, '3.5.0', '>=' ) ) ) {
-			Plugin::instance()->widgets_manager->register( new AnWP_Post_Grid_Element_Flex_Slider() );
-		} else {
-			Plugin::instance()->widgets_manager->register_widget_type( new AnWP_Post_Grid_Element_Flex_Slider() );
+		foreach ( $widgets as $widget_class ) {
+			$widgets_manager->register( new $widget_class() );
 		}
 	}
 
@@ -1182,7 +1314,7 @@ class AnWP_Post_Grid_Elements {
 				}
 
 				// published_in_last_days
-				if ( $options->published_in_last_days > 0 && in_array( $options->posts_to_show, [ 'comment_count', 'post_views', 'oldest' ], true ) ) {
+				if ( $options->published_in_last_days > 0 ) {
 					$args['date_query'] = [ 'after' => absint( $options->published_in_last_days ) . ' days ago' ];
 				}
 			}
@@ -1444,6 +1576,10 @@ class AnWP_Post_Grid_Elements {
 	/**
 	 * Get teaser grid classes
 	 *
+	 * Columns come from the `--anwp-pg-cols` variable that the grid_cols `selectors` set on the
+	 * posts wrapper, at Elementor's breakpoints (PG-BUG-016), so no column classes are returned.
+	 * Kept for theme template overrides that still call it.
+	 *
 	 * @param object $data
 	 * @param int    $default_desktop
 	 * @param int    $default_tablet
@@ -1453,31 +1589,7 @@ class AnWP_Post_Grid_Elements {
 	 * @since 0.1.0
 	 */
 	public function get_teaser_grid_classes( $data, $default_desktop = 3, $default_tablet = 2, $default_mobile = 1 ) {
-
-		$data = (object) wp_parse_args(
-			$data,
-			[
-				'grid_cols'        => $default_desktop,
-				'grid_cols_tablet' => $default_tablet,
-				'grid_cols_mobile' => $default_mobile,
-			]
-		);
-
-		$classes = [];
-
-		// Desktop
-		$grid_cols = ( $data->grid_cols >= 1 && $data->grid_cols <= 4 ) ? absint( $data->grid_cols ) : absint( $default_desktop );
-		$classes[] = 'anwp-col-lg-' . 12 / $grid_cols;
-
-		// Tablet
-		$grid_cols_tablet = ( $data->grid_cols_tablet >= 1 && $data->grid_cols_tablet <= 4 ) ? absint( $data->grid_cols_tablet ) : absint( $default_tablet );
-		$classes[]        = 'anwp-col-sm-' . 12 / $grid_cols_tablet;
-
-		// Mobile
-		$grid_cols_mobile = ( $data->grid_cols_mobile >= 1 && $data->grid_cols_mobile <= 4 ) ? absint( $data->grid_cols_mobile ) : absint( $default_mobile );
-		$classes[]        = 'anwp-col-' . 12 / $grid_cols_mobile;
-
-		return implode( ' ', $classes );
+		return '';
 	}
 
 	/**
@@ -2122,54 +2234,57 @@ class AnWP_Post_Grid_Elements {
 	/**
 	 * Get Post card height
 	 *
+	 * The height comes from --anwp-pg-card-h, which the card_height `selectors` set per
+	 * Elementor device. Kept (with its arguments) for template overrides that call it.
+	 *
 	 * @param object $args
 	 *
 	 * @return string
 	 * @since 0.8.3
 	 */
 	public function get_post_card_height( $args, $default_size = 180 ) {
+		return 'anwp-pg-card-height';
+	}
 
-		$args = (object) wp_parse_args(
-			$args,
-			[
-				'card_height'        => $default_size,
-				'card_height_mobile' => '',
-				'card_height_tablet' => '',
-			]
-		);
+	/**
+	 * Get slider responsive values (data-pg-responsive).
+	 *
+	 * slides_to_show / slides_to_scroll for desktop and every active Elementor device.
+	 * Render mode keeps one control per responsive setting, so an unsaved device value is
+	 * missing from the settings: it gets the control's `{device}_default` (tablet / mobile).
+	 * Devices without a value are left out and inherit in JS, as in Elementor.
+	 *
+	 * @param Widget_Base $widget Slider widget.
+	 * @param object      $data   Widget settings.
+	 *
+	 * @return array
+	 * @since 1.4.0
+	 */
+	public function get_slider_responsive( $widget, $data ) {
+		$output  = [];
+		$devices = array_keys( Plugin::$instance->breakpoints->get_active_breakpoints() );
 
-		if ( empty( $args->card_height_mobile['size'] ) && empty( $args->card_height_tablet['size'] ) ) {
-			$card_height = ( ! empty( $args->card_height['size'] ) && $args->card_height['size'] >= 150 ) ? absint( $args->card_height['size'] ) : $default_size;
+		foreach ( [ 'slides_to_show', 'slides_to_scroll' ] as $name ) {
+			$control         = $widget->get_controls( $name );
+			$output[ $name ] = absint( isset( $data->{$name} ) ? $data->{$name} : $control['default'] );
 
-			return 'anwp-pg-height-' . $card_height;
+			foreach ( $devices as $device ) {
+				$key   = $name . '_' . $device;
+				$value = '';
+
+				if ( isset( $data->{$key} ) ) {
+					$value = $data->{$key};
+				} elseif ( isset( $control[ $device . '_default' ] ) ) {
+					$value = $control[ $device . '_default' ];
+				}
+
+				if ( '' !== $value ) {
+					$output[ $key ] = absint( $value );
+				}
+			}
 		}
 
-		// Card Height
-		$card_height_classes = [];
-
-		// Mobile height (0 - 576px)
-		if ( empty( $args->card_height_mobile['size'] ) ) {
-			$card_height           = ( ! empty( $args->card_height['size'] ) && $args->card_height['size'] >= 150 ) ? absint( $args->card_height['size'] ) : $default_size;
-			$card_height_classes[] = 'anwp-pg-height-' . $card_height;
-		} else {
-			$card_height           = ( ! empty( $args->card_height_mobile['size'] ) && $args->card_height_mobile['size'] >= 150 ) ? absint( $args->card_height_mobile['size'] ) : $default_size;
-			$card_height_classes[] = 'anwp-pg-height-' . $card_height;
-		}
-
-		// Tablet height (device width:  576px - 992px)
-		if ( empty( $args->card_height_tablet['size'] ) ) {
-			$card_height           = ( ! empty( $args->card_height['size'] ) && $args->card_height['size'] >= 150 ) ? absint( $args->card_height['size'] ) : $default_size;
-			$card_height_classes[] = 'anwp-pg-sm-height-' . $card_height;
-		} else {
-			$card_height           = ( ! empty( $args->card_height_tablet['size'] ) && $args->card_height_tablet['size'] >= 150 ) ? absint( $args->card_height_tablet['size'] ) : $default_size;
-			$card_height_classes[] = 'anwp-pg-sm-height-' . $card_height;
-		}
-
-		// Desktop height (device width:  992px and up)
-		$card_height           = ( ! empty( $args->card_height['size'] ) && $args->card_height['size'] >= 150 ) ? absint( $args->card_height['size'] ) : $default_size;
-		$card_height_classes[] = 'anwp-pg-lg-height-' . $card_height;
-
-		return implode( ' ', $card_height_classes );
+		return $output;
 	}
 
 	/**

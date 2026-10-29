@@ -110,7 +110,7 @@ $open_link_in_new_tab = AnWP_Post_Grid::string_to_bool( AnWP_Post_Grid_Settings:
 			<?php if ( 'yes' === $data->show_date ) : ?>
 				<div class="anwp-pg-post-teaser__bottom-meta-item d-flex align-items-center mr-3">
 					<svg class="anwp-pg-icon anwp-pg-icon--s16 mr-1">
-						<use xlink:href="#icon-anwp-pg-calendar"></use>
+						<use href="#icon-anwp-pg-calendar"></use>
 					</svg>
 					<span class="posted-on m-0"><?php echo anwp_post_grid()->elements->get_post_date( $wp_post->ID ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></span>
 				</div>
@@ -122,7 +122,7 @@ $open_link_in_new_tab = AnWP_Post_Grid::string_to_bool( AnWP_Post_Grid_Settings:
 					?>
 					<div class="anwp-pg-post-teaser__bottom-meta-item d-flex align-items-center mr-3">
 						<svg class="anwp-pg-icon anwp-pg-icon--s16 mr-1">
-							<use xlink:href="#icon-anwp-pg-comment-discussion"></use>
+							<use href="#icon-anwp-pg-comment-discussion"></use>
 						</svg>
 						<?php echo intval( get_comments_number( $wp_post->ID ) ); ?>
 					</div>
@@ -133,7 +133,7 @@ $open_link_in_new_tab = AnWP_Post_Grid::string_to_bool( AnWP_Post_Grid_Settings:
 					?>
 					<div class="anwp-pg-post-teaser__bottom-meta-item d-flex align-items-center">
 						<svg class="anwp-pg-icon anwp-pg-icon--s16 mr-1">
-							<use xlink:href="#icon-anwp-pg-eye"></use>
+							<use href="#icon-anwp-pg-eye"></use>
 						</svg>
 						<?php echo intval( pvc_get_post_views( $wp_post->ID ) ); ?>
 					</div>

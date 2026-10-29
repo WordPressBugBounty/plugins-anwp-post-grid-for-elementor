@@ -1,7 +1,6 @@
 <?php
 
 use Elementor\Controls_Manager;
-use Elementor\Controls_Stack;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Typography;
@@ -28,6 +27,15 @@ class AnWP_Post_Grid_Element_Simple_Grid extends Widget_Base {
 	 */
 	public function get_name() {
 		return 'anwp-pg-simple-grid';
+	}
+
+	/**
+	 * Single wrapper under Optimized Markup, the legacy inner container otherwise.
+	 *
+	 * @return bool
+	 */
+	public function has_widget_inner_wrapper(): bool {
+		return ! \Elementor\Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
 	/**
@@ -85,7 +93,7 @@ class AnWP_Post_Grid_Element_Simple_Grid extends Widget_Base {
 	 * @since  0.1.0
 	 * @access protected
 	 */
-	protected function register_controls() { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	protected function register_controls() {
 
 		/**
 		 * Before start of controls.
@@ -99,7 +107,7 @@ class AnWP_Post_Grid_Element_Simple_Grid extends Widget_Base {
 		/**
 		 * Load Section - Query
 		 *
-		 * @param AnWP_Post_Grid_Element_Classic_Blog $this The element.
+		 * @param AnWP_Post_Grid_Element_Simple_Grid $this The element.
 		 *
 		 * @since 0.8.3
 		 */
@@ -108,7 +116,7 @@ class AnWP_Post_Grid_Element_Simple_Grid extends Widget_Base {
 		/**
 		 * Load Section - Header.
 		 *
-		 * @param AnWP_Post_Grid_Element_Classic_Blog $this The element.
+		 * @param AnWP_Post_Grid_Element_Simple_Grid $this The element.
 		 *
 		 * @since 0.7.0
 		 */
@@ -217,21 +225,20 @@ class AnWP_Post_Grid_Element_Simple_Grid extends Widget_Base {
 		$this->add_responsive_control(
 			'grid_cols',
 			[
-				'label'       => __( 'Number of Columns', 'anwp-post-grid' ),
-				'type'        => Controls_Manager::NUMBER,
-				'min'         => 1,
-				'max'         => 4,
-				'default'     => 3,
-				'required'    => true,
-				'device_args' => [
-					Breakpoints_manager::BREAKPOINT_KEY_TABLET => [
-						'required' => false,
-						'default'  => 2,
+				'label'          => __( 'Number of Columns', 'anwp-post-grid' ),
+				'type'           => Controls_Manager::NUMBER,
+				'min'            => 1,
+				'max'            => 4,
+				'default'        => 3,
+				'tablet_default' => 2,
+				'mobile_default' => 1,
+				'device_args'    => [
+					Breakpoints_manager::BREAKPOINT_KEY_DESKTOP => [
+						'required' => true,
 					],
-					Breakpoints_manager::BREAKPOINT_KEY_MOBILE => [
-						'required' => false,
-						'default'  => 1,
-					],
+				],
+				'selectors'      => [
+					'{{WRAPPER}} .anwp-pg-posts-wrapper' => '--anwp-pg-cols: {{VALUE}};',
 				],
 			]
 		);
@@ -339,6 +346,9 @@ class AnWP_Post_Grid_Element_Simple_Grid extends Widget_Base {
 				'desktop_default' => [
 					'unit' => 'px',
 					'size' => 180,
+				],
+				'selectors'       => [
+					'{{WRAPPER}} .anwp-pg-wrap' => '--anwp-pg-card-h: {{SIZE}}{{UNIT}};',
 				],
 			]
 		);

@@ -1,7 +1,6 @@
 <?php
 
 use Elementor\Controls_Manager;
-use Elementor\Controls_Stack;
 use Elementor\Group_Control_Image_Size;
 use Elementor\Group_Control_Typography;
 use Elementor\Widget_Base;
@@ -28,6 +27,15 @@ class AnWP_Post_Grid_Element_Classic_Slider extends Widget_Base {
 	 */
 	public function get_name() {
 		return 'anwp-pg-classic-slider';
+	}
+
+	/**
+	 * Single wrapper under Optimized Markup, the legacy inner container otherwise.
+	 *
+	 * @return bool
+	 */
+	public function has_widget_inner_wrapper(): bool {
+		return ! \Elementor\Plugin::$instance->experiments->is_feature_active( 'e_optimized_markup' );
 	}
 
 	/**
@@ -94,7 +102,7 @@ class AnWP_Post_Grid_Element_Classic_Slider extends Widget_Base {
 	 * @since  0.1.0
 	 * @access protected
 	 */
-	protected function register_controls() { // phpcs:ignore PSR2.Methods.MethodDeclaration.Underscore
+	protected function register_controls() {
 
 		/**
 		 * Before start of controls.
@@ -108,7 +116,7 @@ class AnWP_Post_Grid_Element_Classic_Slider extends Widget_Base {
 		/**
 		 * Load Section - Query
 		 *
-		 * @param AnWP_Post_Grid_Element_Classic_Blog $this The element.
+		 * @param AnWP_Post_Grid_Element_Classic_Slider $this The element.
 		 *
 		 * @since 0.8.3
 		 */
@@ -117,7 +125,7 @@ class AnWP_Post_Grid_Element_Classic_Slider extends Widget_Base {
 		/**
 		 * Load Section - Header.
 		 *
-		 * @param AnWP_Post_Grid_Element_Classic_Blog $this The element.
+		 * @param AnWP_Post_Grid_Element_Classic_Slider $this The element.
 		 *
 		 * @since 0.7.0
 		 */
@@ -309,6 +317,9 @@ class AnWP_Post_Grid_Element_Classic_Slider extends Widget_Base {
 					'unit' => 'px',
 					'size' => 180,
 				],
+				'selectors'       => [
+					'{{WRAPPER}} .anwp-pg-wrap' => '--anwp-pg-card-h: {{SIZE}}{{UNIT}};',
+				],
 			]
 		);
 
@@ -444,7 +455,7 @@ class AnWP_Post_Grid_Element_Classic_Slider extends Widget_Base {
 				'default'   => '',
 				'selectors' => [
 					'{{WRAPPER}} .anwp-pg-post-teaser__title' => 'text-align: {{VALUE}};',
-					'{{WRAPPER}} .anwp-pg-post-teaser__bottom-meta' => '-ms-flex-pack: {{VALUE}} !important; justify-content: {{VALUE}} !important;: ;',
+					'{{WRAPPER}} .anwp-pg-post-teaser__bottom-meta' => 'justify-content: {{VALUE}} !important;',
 				],
 			]
 		);
@@ -698,20 +709,16 @@ class AnWP_Post_Grid_Element_Classic_Slider extends Widget_Base {
 		$this->add_responsive_control(
 			'slides_to_show',
 			[
-				'label'       => __( 'Slides to Show', 'anwp-post-grid' ),
-				'type'        => Controls_Manager::NUMBER,
-				'min'         => 1,
-				'max'         => 8,
-				'default'     => 3,
-				'required'    => true,
-				'device_args' => [
-					Breakpoints_manager::BREAKPOINT_KEY_TABLET => [
-						'required' => false,
-						'default'  => 2,
-					],
-					Breakpoints_manager::BREAKPOINT_KEY_MOBILE => [
-						'required' => false,
-						'default'  => 1,
+				'label'          => __( 'Slides to Show', 'anwp-post-grid' ),
+				'type'           => Controls_Manager::NUMBER,
+				'min'            => 1,
+				'max'            => 8,
+				'default'        => 3,
+				'tablet_default' => 2,
+				'mobile_default' => 1,
+				'device_args'    => [
+					Breakpoints_manager::BREAKPOINT_KEY_DESKTOP => [
+						'required' => true,
 					],
 				],
 			]
@@ -720,21 +727,17 @@ class AnWP_Post_Grid_Element_Classic_Slider extends Widget_Base {
 		$this->add_responsive_control(
 			'slides_to_scroll',
 			[
-				'label'       => __( 'Slides to Scroll', 'anwp-post-grid' ),
-				'description' => __( 'Set how many slides are scrolled per swipe.', 'anwp-post-grid' ),
-				'type'        => Controls_Manager::NUMBER,
-				'min'         => 1,
-				'max'         => 8,
-				'default'     => 1,
-				'required'    => true,
-				'device_args' => [
-					Breakpoints_manager::BREAKPOINT_KEY_TABLET => [
-						'required' => false,
-						'default'  => 1,
-					],
-					Breakpoints_manager::BREAKPOINT_KEY_MOBILE => [
-						'required' => false,
-						'default'  => 1,
+				'label'          => __( 'Slides to Scroll', 'anwp-post-grid' ),
+				'description'    => __( 'Set how many slides are scrolled per swipe.', 'anwp-post-grid' ),
+				'type'           => Controls_Manager::NUMBER,
+				'min'            => 1,
+				'max'            => 8,
+				'default'        => 1,
+				'tablet_default' => 1,
+				'mobile_default' => 1,
+				'device_args'    => [
+					Breakpoints_manager::BREAKPOINT_KEY_DESKTOP => [
+						'required' => true,
 					],
 				],
 			]
@@ -991,6 +994,9 @@ class AnWP_Post_Grid_Element_Classic_Slider extends Widget_Base {
 
 		// Card Height
 		$data->post_card_height_classes = anwp_post_grid()->elements->get_post_card_height( $data );
+
+		// Slides per Elementor device
+		$data->slider_responsive = anwp_post_grid()->elements->get_slider_responsive( $this, $data );
 
 		/*
 		|--------------------------------------------------------------------

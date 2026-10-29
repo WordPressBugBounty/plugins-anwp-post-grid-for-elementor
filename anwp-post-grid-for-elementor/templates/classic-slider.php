@@ -20,29 +20,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 $data = (object) wp_parse_args(
 	$data,
 	[
-		'slider_posts'            => [],
-		'layout'                  => 'd',
-		'wrapper_classes'         => 'swiper-slide',
-		'slides_to_show'          => 3,
-		'slides_to_show_mobile'   => 1,
-		'slides_to_show_tablet'   => 2,
-		'slides_to_scroll'        => 1,
-		'slides_to_scroll_mobile' => 1,
-		'slides_to_scroll_tablet' => 1,
-		'navigation'              => '',
-		'direction'               => 'ltr',
-		'spacing_between'         => [ 'size' => 20 ],
-		'autoplay'                => 'yes',
-		'autoplay_delay'          => 5000,
-		'effect'                  => 'slide',
-		'grid_widget_title'       => '',
-		'header_size'             => 'h3',
-		'header_icon'             => '',
-		'show_read_more'          => '',
-		'read_more_label'         => '',
-		'read_more_class'         => '',
-		'enable_observer'         => '',
-		'loop'                    => '',
+		'slider_posts'      => [],
+		'layout'            => 'd',
+		'wrapper_classes'   => 'swiper-slide',
+		'slider_responsive' => [],
+		'navigation'        => '',
+		'direction'         => 'ltr',
+		'spacing_between'   => [ 'size' => 20 ],
+		'autoplay'          => 'yes',
+		'autoplay_delay'    => 5000,
+		'effect'            => 'slide',
+		'grid_widget_title' => '',
+		'header_size'       => 'h3',
+		'header_icon'       => '',
+		'show_read_more'    => '',
+		'read_more_label'   => '',
+		'read_more_class'   => '',
+		'enable_observer'   => '',
+		'loop'              => '',
 	]
 );
 
@@ -61,13 +56,8 @@ $spacing_between = ( ! empty( $data->spacing_between['size'] ) && $data->spacing
 
 	<!-- Slider main container -->
 	<div
-		class="anwp-pg-classic-slider anwp-pg-swiper-wrapper position-static swiper swiper-container anwp-pg-no-transform"
-		data-pg-slides-per-view="<?php echo esc_attr( $data->slides_to_show ); ?>"
-		data-pg-slides-per-view-mobile="<?php echo esc_attr( $data->slides_to_show_mobile ); ?>"
-		data-pg-slides-per-view-tablet="<?php echo esc_attr( $data->slides_to_show_tablet ); ?>"
-		data-pg-slides-per-group="<?php echo esc_attr( $data->slides_to_scroll ); ?>"
-		data-pg-slides-per-group-mobile="<?php echo esc_attr( $data->slides_to_scroll_mobile ); ?>"
-		data-pg-slides-per-group-tablet="<?php echo esc_attr( $data->slides_to_scroll_tablet ); ?>"
+		class="anwp-pg-classic-slider anwp-pg-swiper-wrapper position-static swiper anwp-pg-no-transform"
+		data-pg-responsive="<?php echo esc_attr( wp_json_encode( $data->slider_responsive ) ); ?>"
 		data-pg-autoplay="<?php echo esc_attr( $data->autoplay ); ?>"
 		data-pg-autoplay-delay="<?php echo esc_attr( $data->autoplay_delay ); ?>"
 		data-pg-space-between="<?php echo esc_attr( $spacing_between ); ?>"
@@ -95,13 +85,13 @@ $spacing_between = ( ! empty( $data->spacing_between['size'] ) && $data->spacing
 			<?php if ( in_array( $data->navigation, [ 'arrows', 'both' ], true ) ) : ?>
 				<div class="elementor-swiper-button elementor-swiper-button-prev">
 					<svg class="anwp-pg-icon anwp-pg-icon--feather anwp-pg-icon--s28">
-						<use xlink:href="#icon-anwp-pg-chevron-left"></use>
+						<use href="#icon-anwp-pg-chevron-left"></use>
 					</svg>
 					<span class="elementor-screen-only"><?php esc_html_e( 'Previous', 'anwp-post-grid' ); ?></span>
 				</div>
 				<div class="elementor-swiper-button elementor-swiper-button-next">
 					<svg class="anwp-pg-icon anwp-pg-icon--feather anwp-pg-icon--s28">
-						<use xlink:href="#icon-anwp-pg-chevron-right"></use>
+						<use href="#icon-anwp-pg-chevron-right"></use>
 					</svg>
 					<span class="elementor-screen-only"><?php esc_html_e( 'Next', 'anwp-post-grid' ); ?></span>
 				</div>
