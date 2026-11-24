@@ -47,7 +47,7 @@ final class AnWP_Post_Grid {
 	 * @var    string
 	 * @since  0.1.0
 	 */
-	const VERSION = '1.4.0';
+	const VERSION = '1.5.0';
 
 	/**
 	 * Version of the widget `selectors` output. Raise it only in a release that changes them:
@@ -326,7 +326,7 @@ final class AnWP_Post_Grid {
 		if ( false !== strpos( $file, 'anwp-post-grid.php' ) ) {
 			$new_links = [
 				'changelog'       => '<a href="https://anwppro.userecho.com/knowledge-bases/52-anwp-post-grid-for-elementor-changelog/categories/131-basic-version/articles" target="_blank">' . esc_html__( 'Changelog', 'anwp-post-grid' ) . '</a>',
-				'premium_version' => '<a href="https://anwp.pro/anwp-post-grid-for-elementor-premium/" target="_blank">' . esc_html__( 'Premium Version', 'anwp-post-grid' ) . '</a>',
+				'premium_version' => '<a href="https://anwp.pro/anwp-post-grid-for-elementor-premium/?utm_source=plugin-admin&utm_medium=referral&utm_campaign=post-grid&utm_content=plugins-list" target="_blank">' . esc_html__( 'Premium Version', 'anwp-post-grid' ) . '</a>',
 			];
 
 			$links = array_merge( $links, $new_links );
@@ -408,13 +408,6 @@ final class AnWP_Post_Grid {
 	 * @since 0.1.0
 	 */
 	public function add_body_classes( $classes ) {
-		global $is_IE;
-
-		// If it's IE, add a class.
-		if ( $is_IE ) {
-			$classes[] = 'ie';
-		}
-
 		$classes[] = 'theme--' . wp_get_theme()->get_template();
 
 		return $classes;
@@ -465,14 +458,15 @@ final class AnWP_Post_Grid {
 		| Plugin Scripts
 		|--------------------------------------------------------------------------
 		*/
-		wp_enqueue_script( 'anwp-pg-scripts', self::url( 'public/js/plugin.min.js' ), [ 'jquery', 'elementor-frontend' ], self::VERSION, false );
+		wp_enqueue_script( 'anwp-pg-scripts', self::url( 'public/js/plugin.min.js' ), [ 'jquery', 'elementor-frontend' ], self::VERSION, true );
 
 		wp_localize_script(
 			'anwp-pg-scripts',
 			'anwpPostGridElementorData',
 			[
 				'premium_active' => self::is_premium_active() ? 'yes' : '',
-				'loader'         => includes_url( 'js/tinymce/skins/lightgray/img/loader.gif' ),
+				'loader'         => self::url( 'public/img/loader.svg' ),
+				'request_error'  => __( 'Couldn\'t load posts. Please try again.', 'anwp-post-grid' ),
 				'rest_url'       => esc_url_raw( rest_url() ), // Public routes are nonce-less: a cached page's nonce expires and would 403 anonymous visitors.
 			]
 		);
@@ -752,7 +746,7 @@ final class AnWP_Post_Grid {
 
 		$data = [
 			'premium'         => self::is_premium_active(),
-			'premium_url'     => 'https://anwp.pro/anwp-post-grid-for-elementor-premium/',
+			'premium_url'     => 'https://anwp.pro/anwp-post-grid-for-elementor-premium/?utm_source=plugin-admin&utm_medium=referral&utm_campaign=post-grid&utm_content=welcome',
 			'readme'          => self::dir( 'readme.txt' ),
 			'support_url'     => '',
 			'premium_version' => '',
@@ -967,7 +961,7 @@ final class AnWP_Post_Grid {
 		// phpcs:ignore WordPress.Security.NonceVerification
 		if ( isset( $_GET['page'] ) && 'redirect-anwp-pg-elementor-premium' === $_GET['page'] ) {
 			// phpcs:ignore WordPress.Security.SafeRedirect
-			wp_redirect( 'https://anwp.pro/anwp-post-grid-for-elementor-premium/' );
+			wp_redirect( 'https://anwp.pro/anwp-post-grid-for-elementor-premium/?utm_source=plugin-admin&utm_medium=referral&utm_campaign=post-grid&utm_content=menu' );
 			die;
 		}
 	}

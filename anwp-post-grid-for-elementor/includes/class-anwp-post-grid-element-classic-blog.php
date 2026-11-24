@@ -214,6 +214,20 @@ class AnWP_Post_Grid_Element_Classic_Blog extends Widget_Base {
 		);
 
 		$this->add_control(
+			'zigzag',
+			[
+				'label'        => __( 'Alternate Image Side', 'anwp-post-grid' ),
+				'description'  => __( 'Every second post shows its image on the other side, and images fill their column. Phones keep the image on top. Pick a larger Image Resolution if images look soft.', 'anwp-post-grid' ),
+				'type'         => Controls_Manager::SWITCHER,
+				'label_on'     => __( 'Yes', 'anwp-post-grid' ),
+				'label_off'    => __( 'No', 'anwp-post-grid' ),
+				'return_value' => 'yes',
+				'default'      => '',
+				'prefix_class' => 'anwp-pg-zigzag-',
+			]
+		);
+
+		$this->add_control(
 			'show_category',
 			[
 				'label'        => __( 'Show Category', 'anwp-post-grid' ),
@@ -522,6 +536,9 @@ class AnWP_Post_Grid_Element_Classic_Blog extends Widget_Base {
 				],
 			]
 		);
+
+		anwp_post_grid()->elements->add_dim_on_hover_control( $this );
+		anwp_post_grid()->elements->add_entrance_control( $this );
 
 		$this->end_controls_section();
 

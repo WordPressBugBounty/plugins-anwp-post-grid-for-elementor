@@ -26,10 +26,11 @@ export default defineConfig( ( { mode } ) => {
 				target: 'es2020',
 				minify: ! unminified,
 				emptyOutDir: false,
-				rollupOptions: {
+				rolldownOptions: {
 					input: 'vuejs/admin/main.js',
 					output: {
 						format: 'umd',
+						strict: true,
 						dir: './anwp-post-grid-for-elementor/admin/js',
 						entryFileNames: unminified ? 'pg-premium-admin-vue.js' : 'pg-premium-admin-vue.min.js',
 						assetFileNames: unminified ? 'pg-premium-admin-vue[extname]' : 'pg-premium-admin-vue.min[extname]',

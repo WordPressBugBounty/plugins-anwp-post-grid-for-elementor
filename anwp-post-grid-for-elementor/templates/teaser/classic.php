@@ -90,22 +90,22 @@ $open_link_in_new_tab = AnWP_Post_Grid::string_to_bool( AnWP_Post_Grid_Settings:
 			if ( 'yes' === $data->show_post_icon && anwp_post_grid()->settings->get_post_icon( $wp_post->ID ) ) :
 				?>
 				<div class="anwp-pg-post-teaser__format-icon d-flex align-items-center justify-content-center">
-					<img loading="lazy" class="anwp-object-contain m-0" src="<?php echo esc_url( anwp_post_grid()->settings->get_post_icon( $wp_post->ID ) ); ?>" alt="post format icon">
+					<img loading="lazy" class="anwp-object-contain m-0" src="<?php echo esc_url( anwp_post_grid()->settings->get_post_icon( $wp_post->ID ) ); ?>" alt="">
 				</div>
 			<?php endif; ?>
 
-			<img loading="lazy" src="<?php echo esc_url( $post_image ); ?>"/>
+			<img loading="lazy" alt="<?php echo esc_attr( get_the_title( $wp_post->ID ) ); ?>" src="<?php echo esc_url( $post_image ); ?>"/>
 
 			<div class="anwp-pg-post-teaser__thumbnail-classic-bg anwp-position-cover"></div>
 
-			<a class="anwp-position-cover anwp-link-without-effects" href="<?php the_permalink( $wp_post ); ?>" aria-hidden="true" <?php echo $open_link_in_new_tab ? 'target="_blank"' : ''; ?>></a>
+			<a class="anwp-position-cover anwp-link-without-effects" href="<?php the_permalink( $wp_post ); ?>" aria-hidden="true" tabindex="-1" <?php echo $open_link_in_new_tab ? 'target="_blank" rel="noopener"' : ''; ?>></a>
 		</div>
 	<?php endif; ?>
 
 	<div class="anwp-pg-post-teaser__content <?php echo esc_attr( $post_image ? ( '1_2' === $data->post_image_width ? 'anwp-col-md-6' : 'anwp-col-md-8' ) : 'anwp-col-12' ); ?>">
 
 		<div class="anwp-pg-post-teaser__title anwp-font-heading my-2">
-			<a class="anwp-link-without-effects" href="<?php the_permalink( $wp_post ); ?>" aria-hidden="true" <?php echo $open_link_in_new_tab ? 'target="_blank"' : ''; ?>>
+			<a class="anwp-link-without-effects" href="<?php the_permalink( $wp_post ); ?>" <?php echo $open_link_in_new_tab ? 'target="_blank" rel="noopener"' : ''; ?>>
 				<?php echo esc_html( get_the_title( $wp_post->ID ) ); ?>
 			</a>
 		</div>
@@ -117,7 +117,7 @@ $open_link_in_new_tab = AnWP_Post_Grid::string_to_bool( AnWP_Post_Grid_Settings:
 					<svg class="anwp-pg-icon anwp-pg-icon--s16 mr-2">
 						<use href="#icon-anwp-pg-person"></use>
 					</svg>
-					<?php the_author_meta( 'display_name', $wp_post->post_author ); ?>
+					<?php echo esc_html( get_the_author_meta( 'display_name', $wp_post->post_author ) ); ?>
 				</div>
 			<?php endif; ?>
 
@@ -169,7 +169,7 @@ $open_link_in_new_tab = AnWP_Post_Grid::string_to_bool( AnWP_Post_Grid_Settings:
 
 		<?php if ( 'yes' === $data->show_read_more ) : ?>
 			<div class="w-100 anwp-pg-read-more mt-3">
-				<a href="<?php the_permalink( $wp_post ); ?>" class="anwp-pg-read-more__btn <?php echo esc_attr( $data->read_more_class ); ?>" <?php echo $open_link_in_new_tab ? 'target="_blank"' : ''; ?>>
+				<a href="<?php the_permalink( $wp_post ); ?>" class="anwp-pg-read-more__btn <?php echo esc_attr( $data->read_more_class ); ?>" <?php echo $open_link_in_new_tab ? 'target="_blank" rel="noopener"' : ''; ?>>
 					<?php echo empty( $data->read_more_label ) ? esc_html__( 'read more', 'anwp-post-grid' ) : esc_html( $data->read_more_label ); ?>
 				</a>
 			</div>

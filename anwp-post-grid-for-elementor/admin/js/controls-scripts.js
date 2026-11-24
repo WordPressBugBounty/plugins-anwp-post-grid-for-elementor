@@ -156,9 +156,14 @@ window.AnWPPostGridControls = window.AnWPPostGridControls || {};
 			return false;
 		}
 
-		var appendHTML = '<div class="anwp-pg-selector-modaal__selected-item"><button type="button" class="anwp-g-button anwp-pg-selector-action-no" data-id="' + id + '"><span class="dashicons dashicons-no"></span></button><span>' + name + '</span></div>';
+		var $item = $( '<div class="anwp-pg-selector-modaal__selected-item"><button type="button" class="anwp-g-button anwp-pg-selector-action-no"><span class="dashicons dashicons-no"></span></button><span></span></div>' );
 
-		$wrapper.append( appendHTML );
+		// SECURITY: names are post titles, term names and display names. An inert DOMParser document decodes
+		// their entities ("News &amp; Events"), then the result goes in as text, never as HTML.
+		$item.find( '.anwp-pg-selector-action-no' ).attr( 'data-id', id );
+		$item.children( 'span' ).text( new DOMParser().parseFromString( String( name ), 'text/html' ).documentElement.textContent );
+
+		$wrapper.append( $item );
 	};
 
 	plugin.initializeSelectorContent = function() {

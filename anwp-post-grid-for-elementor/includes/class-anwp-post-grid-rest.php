@@ -300,6 +300,16 @@ class AnWP_Post_Grid_REST {
 	 */
 	public function render_grid_posts_html( $grid_posts, $data ) {
 
+		// SECURITY: "Post Content" stays on only inside the categories the signed widget covers (set in sanitize_post_query_args()).
+		if ( 'post_content' === ( $data['excerpt_source'] ?? '' ) ) {
+			$scope   = $data['content_source_terms'] ?? null;
+			$current = wp_parse_id_list( $data['filter_by_category'] ?? [] );
+
+			if ( ! is_array( $scope ) || ( $scope && ( ! $current || array_diff( $current, $scope ) ) ) ) {
+				$data['excerpt_source'] = '';
+			}
+		}
+
 		ob_start();
 
 		foreach ( $grid_posts as $grid_post ) {
@@ -328,6 +338,63 @@ class AnWP_Post_Grid_REST {
 	 * @since 1.3.4
 	 */
 	public function sanitize_post_query_args( $raw_args ) {
+
+		$raw_args = is_array( $raw_args ) ? $raw_args : [];
+		$args     = $this->clean_post_query_args( $raw_args );
+
+		// SECURITY: "Post Content" prints raw post_content (shortcodes not run, the_content filters skipped), so it is
+		// honoured only for args a widget on this site rendered. An unsigned or altered blob gets the normal excerpt.
+		if ( 'post_content' === $args['excerpt_source'] ) {
+			$signature = isset( $raw_args['sig'] ) && is_string( $raw_args['sig'] ) ? $raw_args['sig'] : '';
+
+			if ( hash_equals( $this->hash_post_query_args( $args ), $signature ) ) {
+				// The header filter swaps the category after this check, so keep the widget's own categories:
+				// render_grid_posts_html() drops the content source outside them. Empty = the widget has no category limit.
+				$args['content_source_terms'] = $args['filter_by_category'] ? array_merge( $args['filter_by_category'], $args['header_filter_categories'] ) : [];
+			} else {
+				$args['excerpt_source'] = '';
+			}
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Signature of a widget's args blob, added to it as `sig` by get_serialized_load_more_data().
+	 *
+	 * Taken over the cleaned args, so the JSON round trip through the browser (ints, strings, key order)
+	 * can't change it. Not time-bound: a cached page keeps working, unlike a nonce.
+	 *
+	 * @param array $args Args as rendered into the data attribute.
+	 *
+	 * @return string
+	 * @since 1.5.0
+	 */
+	public function sign_post_query_args( $args ) {
+		return $this->hash_post_query_args( $this->clean_post_query_args( is_array( $args ) ? $args : [] ) );
+	}
+
+	/**
+	 * Hash cleaned args with the site salt.
+	 *
+	 * @param array $clean_args Output of clean_post_query_args().
+	 *
+	 * @return string
+	 * @since 1.5.0
+	 */
+	private function hash_post_query_args( $clean_args ) {
+		return wp_hash( 'anwp-pg-args|' . wp_json_encode( $clean_args ) );
+	}
+
+	/**
+	 * Coerce and cap every field of the args blob.
+	 *
+	 * @param array $raw_args Raw args.
+	 *
+	 * @return array
+	 * @since 1.5.0
+	 */
+	private function clean_post_query_args( $raw_args ) {
 
 		$raw_args = wp_parse_args(
 			is_array( $raw_args ) ? $raw_args : [],
@@ -374,7 +441,7 @@ class AnWP_Post_Grid_REST {
 			]
 		);
 
-		return [
+		$clean_args = [
 			'posts_to_show'          => sanitize_text_field( $raw_args['posts_to_show'] ),
 			'include_ids'            => array_slice( wp_parse_id_list( $raw_args['include_ids'] ), 0, 48 ), // SECURITY: "custom" renders every ID and ignores limit, so cap it like limit.
 			'exclude_ids'            => wp_parse_id_list( $raw_args['exclude_ids'] ),
@@ -415,6 +482,11 @@ class AnWP_Post_Grid_REST {
 			'filter_by_c_tax'        => is_array( $raw_args['filter_by_c_tax'] ) ? array_map( 'sanitize_text_field', $raw_args['filter_by_c_tax'] ) : '',
 			'labels_by_c_tax'        => sanitize_text_field( $raw_args['labels_by_c_tax'] ),
 		];
+
+		// Signed with the rest, so the header filter's term can be checked against the widget's own list (see sanitize_post_query_args()).
+		$clean_args['header_filter_categories'] = wp_parse_id_list( $raw_args['header_filter_categories'] ?? '' );
+
+		return $clean_args;
 	}
 
 	/*

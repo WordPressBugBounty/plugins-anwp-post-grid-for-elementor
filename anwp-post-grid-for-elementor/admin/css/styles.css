@@ -415,7 +415,7 @@
   background: #e5f0fa;
   color: #0a4b78;
 }
-.pg-welcome__type--important {
+.pg-welcome__type--important, .pg-welcome__type--security {
   background: #fcebea;
   color: #8a1f11;
 }

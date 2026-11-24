@@ -63,7 +63,7 @@ $open_link_in_new_tab = AnWP_Post_Grid::string_to_bool( AnWP_Post_Grid_Settings:
 
 		<?php if ( 'yes' === $data->show_post_icon && anwp_post_grid()->settings->get_post_icon( $wp_post->ID ) ) : ?>
 			<div class="anwp-pg-post-teaser__format-icon d-flex align-items-center justify-content-center">
-				<img loading="lazy" class="anwp-object-contain" src="<?php echo esc_url( anwp_post_grid()->settings->get_post_icon( $wp_post->ID ) ); ?>" alt="post format icon">
+				<img loading="lazy" class="anwp-object-contain" src="<?php echo esc_url( anwp_post_grid()->settings->get_post_icon( $wp_post->ID ) ); ?>" alt="">
 			</div>
 		<?php endif; ?>
 
@@ -146,5 +146,5 @@ $open_link_in_new_tab = AnWP_Post_Grid::string_to_bool( AnWP_Post_Grid_Settings:
 
 	</div>
 
-	<a class="anwp-position-cover anwp-link-without-effects" href="<?php the_permalink( $wp_post ); ?>" aria-hidden="true" <?php echo $open_link_in_new_tab ? 'target="_blank"' : ''; ?>></a>
+	<a class="anwp-position-cover anwp-link-without-effects" href="<?php the_permalink( $wp_post ); ?>" aria-label="<?php echo esc_attr( get_the_title( $wp_post->ID ) ); ?>" <?php echo $open_link_in_new_tab ? 'target="_blank" rel="noopener"' : ''; ?>></a>
 </div>

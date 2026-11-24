@@ -1,8 +1,8 @@
-// Wraps every emitted Rollup chunk in `(function(){ ... })();` AFTER esbuild minification.
-// Prevents esbuild-hoisted helper `var`s (e.g. `var wp = ...`) from leaking into the global
-// scope and clobbering `window.wp` in WordPress admin context.
+// Wraps every emitted chunk in `(function(){ ... })();` after minification.
+// `strict: true` puts "use strict" at the top of the file; inside this wrapper it applies
+// to our code only, even if a page optimizer concatenates scripts into one file.
 //
-// Use as the LAST entry in vite plugins[]; generateBundle runs after esbuild renderChunk.
+// Use as the LAST entry in vite plugins[]; generateBundle runs after minification.
 export function wrapIIFE() {
 	return {
 		name: 'wrap-iife',

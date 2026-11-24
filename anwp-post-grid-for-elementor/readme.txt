@@ -5,7 +5,7 @@ Tags:              post grid, post slider, post carousel, posts grid, elementor
 Requires at least: 5.3
 Requires PHP:      7.4
 Tested up to:      7.1
-Stable tag:        1.4.0
+Stable tag:        1.5.0
 License:           GPLv2 or later
 License URI:       http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,6 +30,7 @@ https://www.youtube.com/watch?v=yOBSJGqJU7E
 * Choose posts by category, tag, author, post format or post ID, or show related posts. Exclude posts, categories or authors, and limit to posts from the last N days.
 * Sort by latest or oldest (published or modified), title, most commented, or most viewed (with the free Post Views Counter plugin).
 * "Load more" button and pagination on 4 grid widgets.
+* Display options on the 4 grids: dim the other cards on hover, animate cards in as they scroll into view, and (Classic Blog) alternate the image side.
 * Custom post types: any public post type, with its own image field.
 * Category colors for the category badges (background and text).
 * Post icons: show an icon on posts of a category, tag or post format.
@@ -38,11 +39,13 @@ https://www.youtube.com/watch?v=yOBSJGqJU7E
 * Works with most themes out of the box. RTL support.
 
 = AnWP Post Grid Premium =
-Premium is an add-on: install it next to this plugin and you get 8 more widgets and 5 more features, with all 8 free widgets still there. The Premium widgets work like the free ones - the same "Posts to Show", category, tag, author and related-posts options, the same Elementor breakpoints - and they show up in the panel when you search "anwp".
+Premium is an add-on: install it next to this plugin and you get 10 more widgets and 5 more features, with all 8 free widgets still there. The Premium widgets work like the free ones - the same "Posts to Show", category, tag, author and related-posts options, the same Elementor breakpoints - and they show up in the panel when you search "anwp".
 
-**8 more widgets**
+**10 more widgets**
 
-* **Hex Grid** (NEW in Premium 1.1.0): posts as interlocking hexagon tiles - responsive columns, load more, pagination and the header filter.
+* **Slanted Grid** (NEW in Premium 1.2.0): posts as slanted image panels side by side, with the caption below or over the image - straight or slanted row ends, load more, pagination and the header filter.
+* **Sliced Grid** (NEW in Premium 1.2.0): dark, code-style post cards. On hover the image slides in as strips or tiles while the text scrambles - load more, pagination and the header filter.
+* **Hex Grid**: posts as interlocking hexagon tiles - responsive columns, load more, pagination and the header filter.
 * **News Ticker**: a breaking-news headline bar - a continuous marquee, or one post at a time sliding sideways or up.
 * **Card Slider**: a card carousel with hover effects and autoplay.
 * **Hero Slider**: a full-width slider with a Ken Burns effect and post navigation.
@@ -53,18 +56,18 @@ Premium is an add-on: install it next to this plugin and you get 8 more widgets 
 
 **5 more features**
 
-* **Header Category Filter**: category tabs above a grid - visitors switch categories without a page reload. Works on Simple Grid, Light Grid, Classic Grid, Classic Blog, Hex Grid and Simple Ratio Grid, and tabs that don't fit fold into a "more" menu.
-* **Advanced Pagination**: page numbers with previous / next buttons, ellipsis and your own labels, on the 4 free grids and Hex Grid.
-* **Custom Taxonomy**: filter any of the 16 widgets by terms from a custom taxonomy, not only categories and tags - and show those terms in place of the category label.
+* **Header Category Filter**: category tabs above a grid - visitors switch categories without a page reload. Works on Simple Grid, Light Grid, Classic Grid, Classic Blog, Hex Grid, Slanted Grid, Sliced Grid and Simple Ratio Grid, and tabs that don't fit fold into a "more" menu.
+* **Advanced Pagination**: page numbers with previous / next buttons, ellipsis and your own labels, on the 4 free grids, Hex Grid, Slanted Grid and Sliced Grid.
+* **Custom Taxonomy**: filter any of the 18 widgets by terms from a custom taxonomy, not only categories and tags - and show those terms in place of the category label.
 * **Taxonomy Redirects**: send a category or tag archive to a page of your choice (301).
 * **Widget Blocks**: design a block with Elementor and show it in any sidebar or footer widget area.
 
-Every plan covers 3 sites and comes with a 7-day free trial and a 14-day refund guarantee. Screenshots, plans and prices: [AnWP Post Grid Premium widgets](https://anwp.pro/anwp-post-grid-for-elementor-premium/). Try them live on the [Premium demo site](https://grid.anwp.pro/premium-demo/).
+Every plan covers 3 sites and comes with a 7-day free trial and a 14-day refund guarantee. Screenshots, plans and prices: [AnWP Post Grid Premium widgets](https://anwp.pro/anwp-post-grid-for-elementor-premium/?utm_source=wporg&utm_medium=referral&utm_campaign=post-grid&utm_content=readme-premium). Try them live on the [Premium demo site](https://grid.anwp.pro/premium-demo/).
 
 = Links and documentation =
 * [Demo site](https://grid.anwp.pro/)
-* [Documentation and community forum](https://anwppro.userecho.com/communities/50-anwp-post-grid-for-elementor)
-* [Changelog](https://anwppro.userecho.com/knowledge-bases/52-anwp-post-grid-for-elementor-changelog/categories/131-basic-version/articles)
+* [Documentation and community forum](https://support.anwp.pro/communities/50-anwp-post-grid-for-elementor)
+* [Changelog](https://support.anwp.pro/knowledge-bases/52-anwp-post-grid-for-elementor-changelog/categories/131-basic-version/articles)
 
 = Requirements =
 * WordPress 5.3 or newer
@@ -120,6 +123,25 @@ These features load posts through the WordPress REST API, under the `anwp-pg/v1`
 
 == Changelog ==
 
+= 1.5.0 - 2026-11-23 =
+* important: if you use AnWP Post Grid Premium, update it to 1.2.0 at the same time
+* added: Classic Blog - new "Alternate Image Side" option shows the image on the other side in every second post (phones keep the image on top)
+* added: Simple Grid, Light Grid, Classic Grid and Classic Blog - new "Dim Other Cards on Hover" option (Grayscale, Opacity or Blur) fades the other cards while a visitor hovers a card or reaches it with the keyboard
+* added: the same 4 grids - new "Card Entrance Animation" option (Fade Up, Fade or Scale) animates cards as they scroll into view, and every batch from "load more" or pagination; visitors who turn off motion see no animation
+* security: the "Post Content" excerpt no longer shows the text of password-protected posts - thanks to Respect for the report
+* security: a visitor can no longer change the excerpt source, label taxonomy or related post of the load more and pagination requests
+* security: post titles, tag names and author names go into the editor's ID selector as plain text
+* fixed: Classic Blog - hovering a post image darkened its whole column, so a gray band showed beside a narrow image
+* fixed: Hero Block with fewer than 5 posts (custom post IDs or related posts) showed PHP warnings and empty cards
+* fixed: YouTube video thumbnails loaded over http
+* improved: "load more" and pagination show a message when a request fails, and the click can be repeated
+* improved: accessibility - post card links have a name for screen readers, the title link is no longer hidden from them, and links that open in a new tab have rel="noopener"
+* improved: performance - one database query less on every page load, and the settings page caches its custom field list
+* improved: the pagination loading spinner ships with the plugin (it was borrowed from the WordPress editor)
+* improved: the Welcome page and the Elementor panel list the new Premium widgets Slanted Grid and Sliced Grid
+* note: clear your page cache after the update - on a page cached before it, a widget with the "Post Content" excerpt shows the regular excerpt in posts added by "load more" and pagination
+* note: the plugin templates hero-block.php, pagination.php and teaser/ (classic.php, teaser--a.php to teaser--f.php) changed - update your theme copies (yourtheme/anwp-post-grid/)
+
 = 1.4.0 - 2026-10-29 =
 * important: if you use AnWP Post Grid Premium, update it to 1.1.0 at the same time
 * important: requires PHP 7.4 or higher (was 5.6) and Elementor 3.5.0 or higher (was 3.1.0) - WordPress keeps sites on older PHP on 1.3.4
@@ -143,125 +165,4 @@ These features load posts through the WordPress REST API, under the `anwp-pg/v1`
 * improved: code quality and performance
 * fixed: category background and text colors had no effect in Flex Slider
 
-= 1.3.3 - 2025-01-09 =
-* added: option to change Category Text color used in AnWP Grid widget
-
-= 1.3.2 - 2024-12-17 =
-* fixed: slider problem in Elementor 3.26
-
-= 1.3.1 - 2024-12-17 =
-* fixed: Schemes\Typography error in Elementor 3.26
-
-= 1.3.0 - 2024-05-16 =
-* changed: increased the minimal Elementor version to 3.5.0
-* added: new option "Border" (style, color, width) in all widgets
-* added: "Show Author" option in Classic Grid & Classic Slider
-
-= 1.2.1 - 2024-02-12 =
-* fixed: Light Grid image has incorrect proportions in some situations
-* fixed: removed some deprecation code
-
-= 1.2.0 - 2023-06-30 =
-* added: excerpt Typography controls in "Classic Grid" and "Classic Slider"
-* fixed: some slides are not visible (CSS conflict with Elementor Pro)
-
-= 1.1.0 - 2023-03-12 =
-* added: support for Swiper v8.4 (Experiments and Features)
-* added: sort by Title option
-* improved: minor styles improvements
-
-= 1.0.0 - 2022-11-06 =
-* fixed: slider arrows not visible on "Inline Font Icons" experimental feature active
-* fixed: category color picker doesn't work in WP6.1
-* minor improvements
-
-= 0.9.1 - 2022-08-16 =
-* minor improvements
-
-= 0.9.0 - 2022-04-03 =
-* removed: IE support (CSS styles)
-* added: option "Image Rendering". Since v0.9.0 <img> tag is used (better support for image lazy load plugins)
-* added: new widget "Flex Slider" (with initial image aspect ratio)
-* added: new option "Continuous loop mode" in "Simple Slider" and "Classic Slider"
-* added: possibility to sort by latest and oldest modified date
-* added: Custom Post Type support
-
-= 0.8.7 - 2022-03-15 =
-* fixed: category filter disappears with installed Elementor Pro 3.6
-* fixed: Swiper slider conflict with some plugins
-
-= 0.8.6 - 2021-12-17 =
-* fixed: Slider doesn't work with active "Improve Asset Loading" in Elementor v3.5
-
-= 0.8.5 - 2021-10-19 =
-* fixed: rendering author name
-* added: Category ordering in Post Card
-* added: option to Enable Mutation Observer. Use it to fix slider rendering in hidden areas on initialization (e.g.: tabs)
-* fixed: not working Post Card Height (px) for mobile and tablet with "Load More" and "Pagination"
-* added: new excerpt options (number of words, allow HTML, excerpt source) in Classic Blog, Classic Grid, and Classic Slider
-
-= 0.8.4 - 2021-07-15 =
-* added: related posts option in Query
-* added: Hero Block fallback query option (when posts less than 5)
-
-= 0.8.3 - 2021-05-05 =
-* added: new special IDs Selector for posts, categories, tags, authors
-* added: possibility to set custom Post Card Height for mobile, tablet, and desktop
-* added: new "Exclude by Author" argument in Query section
-* added: new option to open links on new tab ("AnWP Post Grid" >> "Settings")
-
-= 0.8.2 - 2021-03-26 =
-* added: 'Category Text Color' option in Simple Slider, Simple Grid and Hero Block
-* added: 'Post Title Color' and 'Post Meta Color' options in Light Grid
-* added: 'Category Text Color', 'Post Excerpt Text Color', and 'Post Meta Text Color' options in Classic Grid, Classic Slider, and Classic Blog
-
-= 0.8.1 - 2021-03-06 =
-* fixed: saving plugin settings in some situation
-
-= 0.8.0 - 2021-03-06 =
-* added: new option "Default Featured Image" in "AnWP Post Grid" >> "Settings"
-* added: custom "Post Icons" option in "AnWP Post Grid" >> "Settings"
-* fixed: Swiper (slider) is loaded properly when Elementor's "Improved Asset Loading" is set to Active
-* improved: prefixed grid CSS classes to prevent conflicts with some themes
-* removed: default video and gallery post format icons. Use more powerful new "Post Icons" options.
-
-= 0.7.1 - 2020-12-13 =
-* added: Settings: category color picker option to set initial color
-* added: Category limit option in all widgets (possibility to show more than one category)
-
-= 0.7.0 - 2020-11-15 =
-* minor fixes
-* introduced premium version
-
-= 0.6.5 - 2020-10-28 =
-* added: option to choose card hover effect (darken & scale or only darken) in "Hero Block", "Classic Grid", "Simple Grid", "Light Grid" (section "Styles & Layout")
-* fixed: category background color is not applied in "Hero Block", "Simple Slider", "Classic Slider"
-* fixed: incorrect vertical-align of the slider arrows in "Simple Slider" in some cases
-
-= 0.6.4 - 2020-10-16 =
-* added: pagination in "Classic Grid", "Classic Blog", "Simple Grid" and "Light Grid"
-* added: a new option "Exclude by Category" in posts query
-
-= 0.6.3 - 2020-08-18 =
-* added new options in Classic Blog: post title color, post meta vertical margin, post meta background color, post image width (1/2 or 1/3)
-* added new options in Classic Grid and Classic Slider: post title color, text align, post meta vertical margin, post meta background color, "read more" button
-
-= 0.6.2 - 2020-07-03 =
-* added new Classic Blog widget
-* added widget header option to the most widgets
-
-= 0.6.1 - 2020-05-29 =
-* added new Hero Block widget
-
-= 0.6.0 - 2020-05-20 =
-* added 2 post carousel sliders
-
-= 0.5.2 - 2020-05-03 =
-* added "load more" button
-
-= 0.5.1 - 2020-04-14 =
-* fixed performance problem on sites with large amount of posts
-
-= 0.5.0 - 2020-04-14 =
-* Initial public release
-
+Older versions: [full changelog](https://plugins.trac.wordpress.org/browser/anwp-post-grid-for-elementor/trunk/changelog.txt).

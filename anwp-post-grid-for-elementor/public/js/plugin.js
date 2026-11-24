@@ -33,18 +33,22 @@ window.anwpPostGridElementor = {};
 
 			elementorFrontend.hooks.addAction( 'frontend/element_ready/anwp-pg-classic-blog.default', function( $scope ) {
 				app.initPagination( $scope );
+				app.initEntrance( $scope );
 			} );
 
 			elementorFrontend.hooks.addAction( 'frontend/element_ready/anwp-pg-classic-grid.default', function( $scope ) {
 				app.initPagination( $scope );
+				app.initEntrance( $scope );
 			} );
 
 			elementorFrontend.hooks.addAction( 'frontend/element_ready/anwp-pg-light-grid.default', function( $scope ) {
 				app.initPagination( $scope );
+				app.initEntrance( $scope );
 			} );
 
 			elementorFrontend.hooks.addAction( 'frontend/element_ready/anwp-pg-simple-grid.default', function( $scope ) {
 				app.initPagination( $scope );
+				app.initEntrance( $scope );
 			} );
 
 			app.initLoadMore();
@@ -70,6 +74,102 @@ window.anwpPostGridElementor = {};
 		} );
 	};
 
+	/**
+	 * Card entrance animation (1.5.0) on the core grids: the widget element carries
+	 * anwp-pg-entrance-{fade-up|fade|scale} (Elementor prefix_class); CSS in scss/public/blocks/_display-options.scss.
+	 *
+	 * - Runs only with IntersectionObserver and without prefers-reduced-motion; otherwise the posts wrapper
+	 *   never gets anwp-pg-entrance--js and the cards stay visible (the CSS hides nothing on its own).
+	 * - Cards already on screen at init are settled at once (never hidden): the page has painted them, so
+	 *   hiding them would flash and push back LCP. Only cards that scroll in later, and every card added by
+	 *   load more / pagination / premium header filter, animate.
+	 * - Stagger = the card's place in the batch that entered the viewport together (one row, or a whole
+	 *   load more / pagination batch), in DOM (= reading) order, capped at 8 steps.
+	 * - New teasers (load more appends, pagination / header filter replace) are picked up by a
+	 *   MutationObserver on the posts wrapper, so those handlers need no call here.
+	 *
+	 * @param {jQuery} $scope Widget element (frontend/element_ready).
+	 */
+	app.initEntrance = function( $scope ) {
+		var STEP_MS = 90;
+		var MAX_STEPS = 8;
+		var el = $scope[ 0 ];
+		var wrapper, io, vh;
+
+		if ( ! el || ! ( 'IntersectionObserver' in window ) || window.matchMedia( '(prefers-reduced-motion: reduce)' ).matches ) {
+			return;
+		}
+
+		if ( ! el.classList.contains( 'anwp-pg-entrance-fade-up' ) && ! el.classList.contains( 'anwp-pg-entrance-fade' ) && ! el.classList.contains( 'anwp-pg-entrance-scale' ) ) {
+			return;
+		}
+
+		wrapper = el.querySelector( '.anwp-pg-posts-wrapper' );
+
+		if ( ! wrapper || wrapper.classList.contains( 'anwp-pg-entrance--js' ) ) {
+			return;
+		}
+
+		function isTeaser( card ) {
+			return card.classList.contains( 'anwp-pg-post-teaser' );
+		}
+
+		function settle( card ) {
+			card.classList.add( 'is-done' );
+			card.style.transitionDelay = '';
+		}
+
+		function watch() {
+			Array.prototype.forEach.call( wrapper.children, function( card ) {
+				if ( isTeaser( card ) && ! card.classList.contains( 'is-in' ) ) {
+					io.observe( card );
+				}
+			} );
+		}
+
+		io = new IntersectionObserver( function( entries ) {
+			var batch = entries
+				.filter( function( e ) {
+					return e.isIntersecting;
+				} )
+				.map( function( e ) {
+					return e.target;
+				} )
+				.sort( function( a, b ) {
+					return a.compareDocumentPosition( b ) & 4 ? -1 : 1; // eslint-disable-line no-bitwise
+				} );
+
+			batch.forEach( function( card, k ) {
+				io.unobserve( card );
+				card.style.transitionDelay = ( Math.min( k, MAX_STEPS ) * STEP_MS ) + 'ms';
+				card.addEventListener( 'transitionend', function onEnd( ev ) {
+					if ( ev.target === card && 'opacity' === ev.propertyName ) {
+						card.removeEventListener( 'transitionend', onEnd );
+						settle( card );
+					}
+				} );
+				card.classList.add( 'is-in' );
+			} );
+		}, { rootMargin: '0px 0px -8% 0px', threshold: 0.15 } );
+
+		// On screen now = already painted: settle before --js can hide it.
+		vh = window.innerHeight || document.documentElement.clientHeight;
+
+		Array.prototype.forEach.call( wrapper.children, function( card ) {
+			var r = card.getBoundingClientRect();
+
+			if ( isTeaser( card ) && r.top < vh && r.bottom > 0 ) {
+				card.classList.add( 'is-in' );
+				card.classList.add( 'is-done' );
+			}
+		} );
+
+		watch();
+		wrapper.classList.add( 'anwp-pg-entrance--js' );
+
+		new MutationObserver( watch ).observe( wrapper, { childList: true } );
+	};
+
 	app.initLoadMore = function() {
 		var $btn = app.$c.body.find( '.anwp-pg-load-more__btn' );
 
@@ -90,8 +190,11 @@ window.anwpPostGridElementor = {};
 				return false;
 			}
 
+			var $postsWrapper = $this.closest( '.anwp-pg-wrap' ).find( '.anwp-pg-posts-wrapper' );
+
 			$this.addClass( 'anwp-pg-load-more--active disabled' );
 			$this.prop( 'disabled', true );
+			app.clearRequestError( $postsWrapper );
 
 			$.ajax( {
 				url: l10n.rest_url + 'anwp-pg/v1/posts/load-more',
@@ -106,7 +209,7 @@ window.anwpPostGridElementor = {};
 			} ).done( function( response ) {
 				if ( response ) {
 
-					$( response.html ).appendTo( $this.closest( '.anwp-pg-wrap' ).find( '.anwp-pg-posts-wrapper' ) );
+					$( response.html ).appendTo( $postsWrapper );
 					$this.data( 'anwp-loaded-qty', response.offset );
 
 					if ( ! response.next ) {
@@ -116,12 +219,36 @@ window.anwpPostGridElementor = {};
 					$( document.body ).trigger( 'post-load' );
 					$( document ).trigger( 'resize' );
 				}
+			} ).fail( function() {
+				app.showRequestError( $postsWrapper );
 			} ).always( function() {
 				$this.removeClass( 'anwp-pg-load-more--active disabled' );
 				$this.prop( 'disabled', false );
 			} );
 
 		} );
+	};
+
+	/**
+	 * Show the "couldn't load posts" notice right after the posts wrapper.
+	 *
+	 * @param {jQuery} $postsWrapper Widget posts wrapper.
+	 */
+	app.showRequestError = function( $postsWrapper ) {
+		app.clearRequestError( $postsWrapper );
+
+		$( '<div class="anwp-pg-request-error" role="alert"></div>' )
+			.text( l10n.request_error )
+			.insertAfter( $postsWrapper );
+	};
+
+	/**
+	 * Remove the request-error notice of a widget.
+	 *
+	 * @param {jQuery} $postsWrapper Widget posts wrapper.
+	 */
+	app.clearRequestError = function( $postsWrapper ) {
+		$postsWrapper.siblings( '.anwp-pg-request-error' ).remove();
 	};
 
 	app.initSwiper = function( $scope ) {
@@ -336,8 +463,9 @@ window.anwpPostGridElementor = {};
 				auto_hide_previous: 'yes' === $wrapper.data( 'anwp-auto_hide_previous' ),
 				auto_hide_next: 'yes' === $wrapper.data( 'anwp-auto_hide_next' ),
 				total_pages: $wrapper.data( 'anwp-total' ),
-				text_previous: $wrapper.data( 'anwp-text_previous' ) ? $wrapper.data( 'anwp-text_previous' ) : '<span aria-hidden="true">&laquo;</span>',
-				text_next: $wrapper.data( 'anwp-text_next' ) ? $wrapper.data( 'anwp-text_next' ) : '<span aria-hidden="true">&raquo;</span>',
+				// SECURITY: the labels are plain text. The browser entity-decodes the attribute, so escape before the HTML concat in renderPagination().
+				text_previous: $wrapper.data( 'anwp-text_previous' ) ? $( '<span>' ).text( $wrapper.data( 'anwp-text_previous' ) ).html() : '<span aria-hidden="true">&laquo;</span>',
+				text_next: $wrapper.data( 'anwp-text_next' ) ? $( '<span>' ).text( $wrapper.data( 'anwp-text_next' ) ).html() : '<span aria-hidden="true">&raquo;</span>',
 				current_page: 1,
 				page_range: $wrapper.data( 'anwp-page_range' ),
 				range_start: 1,
@@ -360,6 +488,8 @@ window.anwpPostGridElementor = {};
 					return false;
 				}
 
+				var previousPage = options.current_page;
+
 				// Set current page
 				options.current_page = Number( $this.data( 'anwp-number' ) );
 
@@ -369,6 +499,7 @@ window.anwpPostGridElementor = {};
 				// Show loader
 				$postsWrapper.addClass( 'anwp-pg-pagination--loading' );
 				$postsWrapper.append( $loader );
+				app.clearRequestError( $postsWrapper );
 
 				// Abort previous Ajax request
 				if ( $xhr && 4 !== $xhr.readyState ) {
@@ -392,6 +523,18 @@ window.anwpPostGridElementor = {};
 						$( document.body ).trigger( 'post-load' );
 						$( document ).trigger( 'resize' );
 					}
+				} ).fail( function( jqXHR, textStatus ) {
+
+					// A newer page click aborted this request on purpose.
+					if ( 'abort' === textStatus ) {
+						return;
+					}
+
+					// Back to the page still on screen, so the failed page can be clicked again.
+					options.current_page = previousPage;
+					renderPagination();
+
+					app.showRequestError( $postsWrapper );
 				} ).always( function() {
 					$postsWrapper.removeClass( 'anwp-pg-pagination--loading' );
 				} );

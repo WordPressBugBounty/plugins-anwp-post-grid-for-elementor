@@ -16,7 +16,9 @@ use Elementor\Core\Kits\Documents\Tabs\Global_Typography;
 class AnWP_Post_Grid_Elements {
 
 	/**
-	 * Demo sites, the fallback for an empty registry demo_url.
+	 * Demo sites, the fallback for an empty registry demo_url. Each registry row links
+	 * DEMO_URL . 'widgets/<name>/'; until that page exists, the demo site 302s the URL
+	 * to one of these two (mu-plugin grid-widget-demo-redirects.php).
 	 *
 	 * @since 1.4.0
 	 */
@@ -32,20 +34,6 @@ class AnWP_Post_Grid_Elements {
 	protected $plugin = null;
 
 	/**
-	 * Parent plugin class.
-	 *
-	 * @since  0.5.1
-	 */
-	public $published_posts = 0;
-
-	/**
-	 * Parent plugin class.
-	 *
-	 * @since  0.5.1
-	 */
-	public $published_posts_limit = 150;
-
-	/**
 	 * Constructor.
 	 *
 	 * @param AnWP_Post_Grid $plugin Main plugin object.
@@ -56,13 +44,6 @@ class AnWP_Post_Grid_Elements {
 	public function __construct( $plugin ) {
 
 		$this->plugin = $plugin;
-
-		// Get number of published posts
-		$counted_posts = wp_count_posts();
-
-		if ( ! empty( $counted_posts->publish ) ) {
-			$this->published_posts = $counted_posts->publish;
-		}
 
 		// Init Hooks
 		$this->hooks();
@@ -661,7 +642,7 @@ class AnWP_Post_Grid_Elements {
 	}
 
 	/**
-	 * All 16 Post Grid widgets, Premium first (Hex Grid leads), then free.
+	 * All 18 Post Grid widgets, Premium first (Slanted Grid leads, Sliced Grid next), then free.
 	 * Feeds the Welcome page, the Elementor promo tiles and the "Premium Features" nerd box.
 	 *
 	 * Row: slug (Elementor widget name), title, desc, image (file in admin/img/welcome/),
@@ -675,13 +656,33 @@ class AnWP_Post_Grid_Elements {
 
 		$rows = [
 			[
+				'slug'       => 'anwp-pg-pro-slanted-grid',
+				'title'      => __( 'Slanted Grid', 'anwp-post-grid' ),
+				'desc'       => __( 'Posts as slanted image panels with captions below or over the image - responsive columns, load more, pagination and the header filter.', 'anwp-post-grid' ),
+				'image'      => 'slanted-grid.webp',
+				'demo_url'   => self::DEMO_URL . 'widgets/slanted-grid/',
+				'pro'        => true,
+				'new'        => true,
+				'promo_icon' => 'anwp-pg-pro-promotion-icon anwp-pg-pro-slanted-grid__admin-icon',
+			],
+			[
+				'slug'       => 'anwp-pg-pro-sliced-grid',
+				'title'      => __( 'Sliced Grid', 'anwp-post-grid' ),
+				'desc'       => __( 'Dark code-style cards - on hover the featured image slides in as slices while the text scrambles. Load more, pagination and the header filter.', 'anwp-post-grid' ),
+				'image'      => 'sliced-grid.webp',
+				'demo_url'   => self::DEMO_URL . 'widgets/sliced-grid/',
+				'pro'        => true,
+				'new'        => true,
+				'promo_icon' => 'anwp-pg-pro-promotion-icon anwp-pg-pro-sliced-grid__admin-icon',
+			],
+			[
 				'slug'       => 'anwp-pg-pro-hex-grid',
 				'title'      => __( 'Hex Grid', 'anwp-post-grid' ),
 				'desc'       => __( 'Posts as interlocking hexagon tiles - responsive columns, load more, pagination and the header filter.', 'anwp-post-grid' ),
 				'image'      => 'hex-grid.webp',
-				'demo_url'   => '',
+				'demo_url'   => self::DEMO_URL . 'widgets/hex-grid/',
 				'pro'        => true,
-				'new'        => true,
+				'new'        => false,
 				'promo_icon' => 'anwp-pg-pro-promotion-icon anwp-pg-pro-hex-grid__admin-icon',
 			],
 			[
@@ -689,7 +690,7 @@ class AnWP_Post_Grid_Elements {
 				'title'      => __( 'News Ticker', 'anwp-post-grid' ),
 				'desc'       => __( 'A breaking-news headline bar - a continuous marquee, or one post at a time sliding sideways or up.', 'anwp-post-grid' ),
 				'image'      => 'news-ticker.webp',
-				'demo_url'   => '',
+				'demo_url'   => self::DEMO_URL . 'widgets/news-ticker/',
 				'pro'        => true,
 				'new'        => false,
 				'promo_icon' => 'anwp-pg-pro-promotion-icon anwp-pg-pro-news-ticker__admin-icon',
@@ -699,7 +700,7 @@ class AnWP_Post_Grid_Elements {
 				'title'      => __( 'Card Slider', 'anwp-post-grid' ),
 				'desc'       => __( 'A card carousel with hover effects and autoplay.', 'anwp-post-grid' ),
 				'image'      => 'card-slider.webp',
-				'demo_url'   => '',
+				'demo_url'   => self::DEMO_URL . 'widgets/card-slider/',
 				'pro'        => true,
 				'new'        => false,
 				'promo_icon' => 'anwp-pg-pro-promotion-icon anwp-pg-simple-slider__admin-icon',
@@ -709,7 +710,7 @@ class AnWP_Post_Grid_Elements {
 				'title'      => __( 'Hero Slider', 'anwp-post-grid' ),
 				'desc'       => __( 'A full-width slider with a Ken Burns effect and post navigation.', 'anwp-post-grid' ),
 				'image'      => 'hero-slider.webp',
-				'demo_url'   => '',
+				'demo_url'   => self::DEMO_URL . 'widgets/hero-slider/',
 				'pro'        => true,
 				'new'        => false,
 				'promo_icon' => 'anwp-pg-pro-promotion-icon anwp-pg-simple-slider__admin-icon',
@@ -719,7 +720,7 @@ class AnWP_Post_Grid_Elements {
 				'title'      => __( 'Mosaic Slider', 'anwp-post-grid' ),
 				'desc'       => __( 'Tall cards and stacked pairs mixed into a sliding mosaic, in 3 styles.', 'anwp-post-grid' ),
 				'image'      => 'mosaic-slider.webp',
-				'demo_url'   => '',
+				'demo_url'   => self::DEMO_URL . 'widgets/mosaic-slider/',
 				'pro'        => true,
 				'new'        => false,
 				'promo_icon' => 'anwp-pg-pro-promotion-icon anwp-pg-simple-slider__admin-icon',
@@ -729,7 +730,7 @@ class AnWP_Post_Grid_Elements {
 				'title'      => __( 'Scale Grid', 'anwp-post-grid' ),
 				'desc'       => __( 'The post under the mouse grows and shows its excerpt - the others stay grayscale.', 'anwp-post-grid' ),
 				'image'      => 'zooming-grid.webp',
-				'demo_url'   => '',
+				'demo_url'   => self::DEMO_URL . 'widgets/scale-grid/',
 				'pro'        => true,
 				'new'        => false,
 				'promo_icon' => 'anwp-pg-pro-promotion-icon anwp-pg-pro-news-ticker__admin-icon',
@@ -739,7 +740,7 @@ class AnWP_Post_Grid_Elements {
 				'title'      => __( 'Simple Ratio Grid', 'anwp-post-grid' ),
 				'desc'       => __( 'Cards locked to the image aspect ratio you pick, with load more and pagination.', 'anwp-post-grid' ),
 				'image'      => 'simple-ratio-grid.webp',
-				'demo_url'   => '',
+				'demo_url'   => self::DEMO_URL . 'widgets/simple-ratio-grid/',
 				'pro'        => true,
 				'new'        => false,
 				'promo_icon' => 'anwp-pg-pro-promotion-icon anwp-pg-pro-news-ticker__admin-icon',
@@ -749,7 +750,7 @@ class AnWP_Post_Grid_Elements {
 				'title'      => __( 'Parallax Grid', 'anwp-post-grid' ),
 				'desc'       => __( '3D tilt cards that follow the mouse, with a moving highlight and shadow.', 'anwp-post-grid' ),
 				'image'      => 'parallax-grid.webp',
-				'demo_url'   => '',
+				'demo_url'   => self::DEMO_URL . 'widgets/parallax-grid/',
 				'pro'        => true,
 				'new'        => false,
 				'promo_icon' => 'anwp-pg-pro-promotion-icon anwp-pg-pro-news-ticker__admin-icon',
@@ -759,7 +760,7 @@ class AnWP_Post_Grid_Elements {
 				'title'      => __( 'Simple Grid', 'anwp-post-grid' ),
 				'desc'       => __( 'Image cards in a responsive grid - card styles, hover effects, load more and pagination.', 'anwp-post-grid' ),
 				'image'      => 'simple-grid.webp',
-				'demo_url'   => '',
+				'demo_url'   => self::DEMO_URL . 'widgets/simple-grid/',
 				'pro'        => false,
 				'new'        => false,
 				'promo_icon' => '',
@@ -769,7 +770,7 @@ class AnWP_Post_Grid_Elements {
 				'title'      => __( 'Light Grid', 'anwp-post-grid' ),
 				'desc'       => __( 'A compact grid - a small thumbnail beside each title and its meta, with load more and pagination.', 'anwp-post-grid' ),
 				'image'      => 'light-grid.webp',
-				'demo_url'   => '',
+				'demo_url'   => self::DEMO_URL . 'widgets/light-grid/',
 				'pro'        => false,
 				'new'        => false,
 				'promo_icon' => '',
@@ -779,7 +780,7 @@ class AnWP_Post_Grid_Elements {
 				'title'      => __( 'Classic Grid', 'anwp-post-grid' ),
 				'desc'       => __( 'The classic blog card: image, title, excerpt and meta, with load more and pagination.', 'anwp-post-grid' ),
 				'image'      => 'classic-grid.webp',
-				'demo_url'   => '',
+				'demo_url'   => self::DEMO_URL . 'widgets/classic-grid/',
 				'pro'        => false,
 				'new'        => false,
 				'promo_icon' => '',
@@ -789,7 +790,7 @@ class AnWP_Post_Grid_Elements {
 				'title'      => __( 'Classic Blog', 'anwp-post-grid' ),
 				'desc'       => __( 'A blog list with the image beside the excerpt, load more and pagination.', 'anwp-post-grid' ),
 				'image'      => 'classic-blog.webp',
-				'demo_url'   => '',
+				'demo_url'   => self::DEMO_URL . 'widgets/classic-blog/',
 				'pro'        => false,
 				'new'        => false,
 				'promo_icon' => '',
@@ -799,7 +800,7 @@ class AnWP_Post_Grid_Elements {
 				'title'      => __( 'Hero Block', 'anwp-post-grid' ),
 				'desc'       => __( 'One large featured post with smaller ones beside it - a front-page header.', 'anwp-post-grid' ),
 				'image'      => 'hero-block.webp',
-				'demo_url'   => '',
+				'demo_url'   => self::DEMO_URL . 'widgets/hero-block/',
 				'pro'        => false,
 				'new'        => false,
 				'promo_icon' => '',
@@ -809,7 +810,7 @@ class AnWP_Post_Grid_Elements {
 				'title'      => __( 'Simple Slider', 'anwp-post-grid' ),
 				'desc'       => __( 'An image card carousel with autoplay, loop, arrows and dots.', 'anwp-post-grid' ),
 				'image'      => 'simple-slider.webp',
-				'demo_url'   => '',
+				'demo_url'   => self::DEMO_URL . 'widgets/simple-slider/',
 				'pro'        => false,
 				'new'        => false,
 				'promo_icon' => '',
@@ -819,7 +820,7 @@ class AnWP_Post_Grid_Elements {
 				'title'      => __( 'Classic Slider', 'anwp-post-grid' ),
 				'desc'       => __( 'Classic Grid cards as a carousel - excerpt, autoplay, slide or fade.', 'anwp-post-grid' ),
 				'image'      => 'classic-slider.webp',
-				'demo_url'   => '',
+				'demo_url'   => self::DEMO_URL . 'widgets/classic-slider/',
 				'pro'        => false,
 				'new'        => false,
 				'promo_icon' => '',
@@ -829,7 +830,7 @@ class AnWP_Post_Grid_Elements {
 				'title'      => __( 'Flex Slider', 'anwp-post-grid' ),
 				'desc'       => __( 'A free-mode carousel: drag through the cards, with autoplay, arrows and dots.', 'anwp-post-grid' ),
 				'image'      => 'flex-slider.webp',
-				'demo_url'   => '',
+				'demo_url'   => self::DEMO_URL . 'widgets/flex-slider/',
 				'pro'        => false,
 				'new'        => false,
 				'promo_icon' => '',
@@ -1142,6 +1143,16 @@ class AnWP_Post_Grid_Elements {
 
 			$current_post = get_post( ! empty( $options->related_post_id ) ? $options->related_post_id : '' );
 
+			if ( ! $current_post ) {
+				return [];
+			}
+
+			// SECURITY: related_post_id is client-controlled on the public REST routes. An unpublished or non-public
+			// anchor would show its terms and author through the posts it "relates" to.
+			if ( ! empty( $options->related_post_id ) && ( 'publish' !== get_post_status( $current_post ) || ! is_post_type_viewable( $current_post->post_type ) ) ) {
+				return [];
+			}
+
 			// Hide current post
 			$args['post__not_in'] = [ $current_post->ID ];
 
@@ -1324,7 +1335,22 @@ class AnWP_Post_Grid_Elements {
 			$args['fields'] = 'ids';
 		}
 
-		return get_posts( apply_filters( 'anwp-pg-el/public/get_grid_posts_args', $args, $options ) );
+		$posts = get_posts( apply_filters( 'anwp-pg-el/public/get_grid_posts_args', $args, $options ) );
+
+		if ( 'ids' === $output ) {
+			return $posts;
+		}
+
+		// SECURITY: the "Post Content" excerpt source trims raw post_content, which skips the password check
+		// get_the_excerpt() does. Blank it here so every layout, theme template copy and REST route is covered.
+		// get_post() hands out a fresh WP_Post per call, so the object cache and the page's own post are untouched.
+		foreach ( $posts as $post ) {
+			if ( $post instanceof WP_Post && post_password_required( $post ) ) {
+				$post->post_content = '';
+			}
+		}
+
+		return $posts;
 	}
 
 	/**
@@ -1382,7 +1408,7 @@ class AnWP_Post_Grid_Elements {
 				$video_id = $this->get_youtube_id( $video_data['url'] );
 
 				if ( $video_id ) {
-					return esc_url( sprintf( 'http://img.youtube.com/vi/%s/maxresdefault.jpg', $video_id ) );
+					return esc_url( sprintf( 'https://img.youtube.com/vi/%s/maxresdefault.jpg', $video_id ) );
 				}
 			}
 		}
@@ -1557,16 +1583,16 @@ class AnWP_Post_Grid_Elements {
 
 		$time_string = '<time class="anwp-pg-published anwp-pg-updated" datetime="%1$s">%2$s</time>';
 
-		if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) ) {
+		if ( get_the_time( 'U', $post_id ) !== get_the_modified_time( 'U', $post_id ) ) {
 			$time_string = '<time class="anwp-pg-published" datetime="%1$s">%2$s</time><time class="anwp-pg-updated" datetime="%3$s">%4$s</time>';
 		}
 
 		$time_string = sprintf(
 			$time_string,
-			get_the_date( DATE_W3C, $post_id ),
-			get_the_date( '', $post_id ),
-			get_the_modified_date( DATE_W3C, $post_id ),
-			get_the_modified_date( '', $post_id )
+			esc_attr( get_the_date( DATE_W3C, $post_id ) ),
+			esc_html( get_the_date( '', $post_id ) ),
+			esc_attr( get_the_modified_date( DATE_W3C, $post_id ) ),
+			esc_html( get_the_modified_date( '', $post_id ) )
 		);
 
 		// Wrap the time string in a link, and preface it with 'Posted on'.
@@ -1648,6 +1674,9 @@ class AnWP_Post_Grid_Elements {
 			'labels_by_c_tax'        => '',
 		];
 
+		// Signed with the rest: the header filter's term is checked against this list (AnWP_Post_Grid_REST::sanitize_post_query_args()).
+		$default_data['header_filter_categories'] = '';
+
 		$options = wp_parse_args( $data, $default_data );
 
 		$output = array_intersect_key( $options, $default_data );
@@ -1663,6 +1692,9 @@ class AnWP_Post_Grid_Elements {
 			},
 			$output
 		);
+
+		// SECURITY: lets the public REST routes tell a widget-rendered blob from a hand-made one.
+		$output['sig'] = anwp_post_grid()->rest->sign_post_query_args( $output );
 
 		return wp_json_encode( $output );
 	}
@@ -2232,6 +2264,75 @@ class AnWP_Post_Grid_Elements {
 	}
 
 	/**
+	 * Add the "Dim Other Cards on Hover" control to a core grid (Simple, Light, Classic Grid, Classic Blog).
+	 *
+	 * Call it inside an open controls section. The value reaches the markup as a `prefix_class` on the
+	 * widget element (`anwp-pg-dim-{effect}`); None prints no class, so saved pages render unchanged.
+	 * CSS: scss/public/blocks/_display-options.scss.
+	 *
+	 * @param Widget_Base $element
+	 *
+	 * @since 1.5.0
+	 */
+	public function add_dim_on_hover_control( $element ) {
+
+		$element->add_control(
+			'dim_on_hover_divider',
+			[
+				'type' => Controls_Manager::DIVIDER,
+			]
+		);
+
+		$element->add_control(
+			'dim_on_hover',
+			[
+				'label'        => __( 'Dim Other Cards on Hover', 'anwp-post-grid' ),
+				'description'  => __( 'Hovering a card, or reaching it with the keyboard, fades the other cards. Touch screens are not affected.', 'anwp-post-grid' ),
+				'type'         => Controls_Manager::SELECT,
+				'default'      => '',
+				'options'      => [
+					''          => __( 'None', 'anwp-post-grid' ),
+					'grayscale' => __( 'Grayscale', 'anwp-post-grid' ),
+					'opacity'   => __( 'Opacity', 'anwp-post-grid' ),
+					'blur'      => __( 'Blur', 'anwp-post-grid' ),
+				],
+				'prefix_class' => 'anwp-pg-dim-',
+			]
+		);
+	}
+
+	/**
+	 * Add the "Card Entrance Animation" control to a core grid (Simple, Light, Classic Grid, Classic Blog).
+	 *
+	 * Call it inside an open controls section. The value reaches the markup as a `prefix_class` on the
+	 * widget element (`anwp-pg-entrance-{preset}`); None prints no class, so saved pages render unchanged.
+	 * JS: `initEntrance()` in public/js/plugin.js. CSS: scss/public/blocks/_display-options.scss.
+	 *
+	 * @param Widget_Base $element
+	 *
+	 * @since 1.5.0
+	 */
+	public function add_entrance_control( $element ) {
+
+		$element->add_control(
+			'card_entrance',
+			[
+				'label'        => __( 'Card Entrance Animation', 'anwp-post-grid' ),
+				'description'  => __( 'Cards animate in as they scroll into view, and so does each new batch from Load More or pagination. Cards already on screen when the page opens show at once. Visitors who turn off motion in their system settings see no animation. Plays on the published page, not in the editor preview.', 'anwp-post-grid' ),
+				'type'         => Controls_Manager::SELECT,
+				'default'      => '',
+				'options'      => [
+					''        => __( 'None', 'anwp-post-grid' ),
+					'fade-up' => __( 'Fade Up', 'anwp-post-grid' ),
+					'fade'    => __( 'Fade', 'anwp-post-grid' ),
+					'scale'   => __( 'Scale', 'anwp-post-grid' ),
+				],
+				'prefix_class' => 'anwp-pg-entrance-',
+			]
+		);
+	}
+
+	/**
 	 * Get Post card height
 	 *
 	 * The height comes from --anwp-pg-card-h, which the card_height `selectors` set per
@@ -2298,6 +2399,14 @@ class AnWP_Post_Grid_Elements {
 	public function get_post_categories( $post_id, $data = [] ) {
 
 		if ( ! empty( $data->labels_by_c_tax ) ) {
+
+			// SECURITY: labels_by_c_tax is client-controlled on the public REST routes. Allow what the control offers: public taxonomies.
+			$c_taxonomy = is_string( $data->labels_by_c_tax ) ? get_taxonomy( $data->labels_by_c_tax ) : false;
+
+			if ( ! $c_taxonomy || ! $c_taxonomy->public ) {
+				return [];
+			}
+
 			return apply_filters( 'anwp-pg-el/public/replace_category_label_by_c_tax', $post_id, $data->labels_by_c_tax );
 		}
 

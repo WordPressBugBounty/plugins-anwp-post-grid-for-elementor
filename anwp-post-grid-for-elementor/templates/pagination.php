@@ -32,7 +32,7 @@ if ( 'yes' !== $data->show_pagination || ! absint( $data->total_posts ) || ! abs
 	return;
 }
 ?>
-<nav aria-label="anwp-pg-pagination-navigation" class="anwp-pg-pagination-navigation position-relative">
+<nav aria-label="<?php echo esc_attr__( 'Posts navigation', 'anwp-post-grid' ); ?>" class="anwp-pg-pagination-navigation position-relative">
 	<ul class="anwp-pg-pagination mx-0 justify-content-center flex-wrap"
 		data-anwp-show_previous="yes"
 		data-anwp-show_next="yes"

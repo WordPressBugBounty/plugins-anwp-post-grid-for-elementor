@@ -49,22 +49,28 @@ $secondary_classes = 'anwp-col-sm-3';
 			<?php
 			$data->wrapper_classes = 'anwp-pg-hero-secondary-block';
 
-			$data->grid_post = $data->grid_posts[1];
-			anwp_post_grid()->load_partial( $data, 'teaser/teaser', sanitize_key( $data->layout ) );
+			foreach ( [ 1, 2 ] as $slot ) {
+				if ( empty( $data->grid_posts[ $slot ] ) ) {
+					continue;
+				}
 
-			$data->grid_post = $data->grid_posts[2];
-			anwp_post_grid()->load_partial( $data, 'teaser/teaser', sanitize_key( $data->layout ) );
+				$data->grid_post = $data->grid_posts[ $slot ];
+				anwp_post_grid()->load_partial( $data, 'teaser/teaser', sanitize_key( $data->layout ) );
+			}
 			?>
 		</div>
 		<div class="<?php echo esc_attr( $secondary_classes ); ?> anwp-pg-hero-secondary-block-wrapper d-sm-none d-lg-block">
 			<?php
 			$data->wrapper_classes = 'anwp-pg-hero-secondary-block';
 
-			$data->grid_post = $data->grid_posts[3];
-			anwp_post_grid()->load_partial( $data, 'teaser/teaser', sanitize_key( $data->layout ) );
+			foreach ( [ 3, 4 ] as $slot ) {
+				if ( empty( $data->grid_posts[ $slot ] ) ) {
+					continue;
+				}
 
-			$data->grid_post = $data->grid_posts[4];
-			anwp_post_grid()->load_partial( $data, 'teaser/teaser', sanitize_key( $data->layout ) );
+				$data->grid_post = $data->grid_posts[ $slot ];
+				anwp_post_grid()->load_partial( $data, 'teaser/teaser', sanitize_key( $data->layout ) );
+			}
 			?>
 		</div>
 	</div>

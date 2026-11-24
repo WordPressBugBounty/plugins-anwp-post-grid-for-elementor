@@ -65,6 +65,9 @@ class AnWP_Post_Grid_Settings {
 		|--------------------------------------------------------------------
 		*/
 		add_action( 'admin_enqueue_scripts', [ $this, 'settings_enqueue_scripts' ] );
+
+		// Cached CPT meta keys (get_post_type_options()).
+		add_action( 'save_post', [ $this, 'flush_cpt_meta_keys' ], 10, 2 );
 	}
 
 	/**
@@ -464,7 +467,6 @@ class AnWP_Post_Grid_Settings {
 	public function get_post_icon( $post_id ) {
 
 		static $icon_options = null;
-		static $options_data = null;
 		static $post_icons   = [];
 
 		if ( null === $icon_options ) {
@@ -474,25 +476,6 @@ class AnWP_Post_Grid_Settings {
 		// Return empty icon if options is not set
 		if ( empty( $icon_options ) ) {
 			return '';
-		}
-
-		if ( null === $options_data ) {
-			foreach ( $icon_options as $icon_option ) {
-				switch ( $icon_option['type'] ) {
-
-					case 'category':
-						$options_data['category'][] = $icon_option['type_id'];
-						break;
-
-					case 'tag':
-						$options_data['tag'][] = $icon_option['type_id'];
-						break;
-
-					case 'post_format':
-						$options_data['post_format'][] = $icon_option['type_id'];
-						break;
-				}
-			}
 		}
 
 		// Return cached icon
@@ -559,8 +542,6 @@ class AnWP_Post_Grid_Settings {
 		}
 
 		if ( empty( $icon_url ) && absint( $icon_option['custom_icon_id'] ) ) {
-			$icon_url = AnWP_Post_Grid::url( 'icons/' . sanitize_text_field( $icon_option['icon'] ) . '.svg' );
-
 			if ( absint( $icon_option['custom_icon_id'] ) ) {
 				$icon_image_url = wp_get_attachment_image_url( $icon_option['custom_icon_id'], 'full' );
 
@@ -599,17 +580,25 @@ class AnWP_Post_Grid_Settings {
 
 		foreach ( $post_types as $post_type ) {
 
-			$meta_fields = $wpdb->get_col(
-				$wpdb->prepare(
-					"
-						SELECT DISTINCT pm.meta_key
-						FROM $wpdb->postmeta pm
-						LEFT JOIN $wpdb->posts p ON p.ID = pm.post_id
-						WHERE p.post_status = 'publish' AND p.post_type = %s
-						",
-					$post_type->name
-				)
-			);
+			$cache_key   = $this->get_cpt_meta_keys_transient( $post_type->name );
+			$meta_fields = get_transient( $cache_key );
+
+			if ( ! is_array( $meta_fields ) ) {
+				$meta_fields = $wpdb->get_col(
+					$wpdb->prepare(
+						"
+							SELECT DISTINCT pm.meta_key
+							FROM $wpdb->postmeta pm
+							LEFT JOIN $wpdb->posts p ON p.ID = pm.post_id
+							WHERE p.post_status = 'publish' AND p.post_type = %s
+							",
+						$post_type->name
+					)
+				);
+
+				// An empty list is cached too, or a CPT without meta re-runs the query on every load.
+				set_transient( $cache_key, $meta_fields, DAY_IN_SECONDS );
+			}
 
 			$output[] = [
 				'name'       => $post_type->name,
@@ -621,6 +610,43 @@ class AnWP_Post_Grid_Settings {
 		}
 
 		return $output;
+	}
+
+	/**
+	 * Transient name of a CPT's cached meta key list.
+	 *
+	 * Shared by get_post_type_options() and flush_cpt_meta_keys() - both must build it here.
+	 *
+	 * @param string $post_type Post type name (max 20 chars).
+	 *
+	 * @return string
+	 * @since 1.4.1
+	 */
+	private function get_cpt_meta_keys_transient( $post_type ) {
+		return 'anwp_pg_cpt_meta_' . $post_type;
+	}
+
+	/**
+	 * Drop a CPT's cached meta key list when one of its posts is saved.
+	 *
+	 * Meta written without a post save (imports) waits for the 1-day TTL.
+	 *
+	 * @param int     $post_id Post ID.
+	 * @param WP_Post $post    Post object.
+	 *
+	 * @return void
+	 * @since 1.4.1
+	 */
+	public function flush_cpt_meta_keys( $post_id, $post ) {
+
+		$post_type = empty( $post->post_type ) ? null : get_post_type_object( $post->post_type );
+
+		// Same set as get_post_type_options(): public, non-builtin.
+		if ( ! $post_type || ! $post_type->public || $post_type->_builtin ) {
+			return;
+		}
+
+		delete_transient( $this->get_cpt_meta_keys_transient( $post_type->name ) );
 	}
 
 	/**

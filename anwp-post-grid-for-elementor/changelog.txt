@@ -1,5 +1,24 @@
 == Changelog ==
 
+= 1.5.0 - 2026-11-23 =
+* important: if you use AnWP Post Grid Premium, update it to 1.2.0 at the same time
+* added: Classic Blog - new "Alternate Image Side" option shows the image on the other side in every second post (phones keep the image on top)
+* added: Simple Grid, Light Grid, Classic Grid and Classic Blog - new "Dim Other Cards on Hover" option (Grayscale, Opacity or Blur) fades the other cards while a visitor hovers a card or reaches it with the keyboard
+* added: the same 4 grids - new "Card Entrance Animation" option (Fade Up, Fade or Scale) animates cards as they scroll into view, and every batch from "load more" or pagination; visitors who turn off motion see no animation
+* security: the "Post Content" excerpt no longer shows the text of password-protected posts - thanks to Respect for the report
+* security: a visitor can no longer change the excerpt source, label taxonomy or related post of the load more and pagination requests
+* security: post titles, tag names and author names go into the editor's ID selector as plain text
+* fixed: Classic Blog - hovering a post image darkened its whole column, so a gray band showed beside a narrow image
+* fixed: Hero Block with fewer than 5 posts (custom post IDs or related posts) showed PHP warnings and empty cards
+* fixed: YouTube video thumbnails loaded over http
+* improved: "load more" and pagination show a message when a request fails, and the click can be repeated
+* improved: accessibility - post card links have a name for screen readers, the title link is no longer hidden from them, and links that open in a new tab have rel="noopener"
+* improved: performance - one database query less on every page load, and the settings page caches its custom field list
+* improved: the pagination loading spinner ships with the plugin (it was borrowed from the WordPress editor)
+* improved: the Welcome page and the Elementor panel list the new Premium widgets Slanted Grid and Sliced Grid
+* note: clear your page cache after the update - on a page cached before it, a widget with the "Post Content" excerpt shows the regular excerpt in posts added by "load more" and pagination
+* note: the plugin templates hero-block.php, pagination.php and teaser/ (classic.php, teaser--a.php to teaser--f.php) changed - update your theme copies (yourtheme/anwp-post-grid/)
+
 = 1.4.0 - 2026-10-29 =
 * important: if you use AnWP Post Grid Premium, update it to 1.1.0 at the same time
 * important: requires PHP 7.4 or higher (was 5.6) and Elementor 3.5.0 or higher (was 3.1.0) - WordPress keeps sites on older PHP on 1.3.4

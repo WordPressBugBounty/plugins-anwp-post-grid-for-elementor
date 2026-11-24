@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: AnWP Post Grid and Post Carousel Slider for Elementor
- * Plugin URI:  https://anwppro.userecho.com/communities/50-anwp-post-grid-for-elementor
+ * Plugin URI:  https://anwp.pro/anwp-post-grid-for-elementor-premium/?utm_source=wporg&utm_medium=referral&utm_campaign=post-grid&utm_content=homepage
  * Description: 8 post grid and post carousel slider widgets for Elementor. Filter by category, tag or author, with load more and pagination.
- * Version:     1.4.0
+ * Version:     1.5.0
  * Author:      Andrei Strekozov <anwppro>
  * Author URI:  https://anwp.pro
  * License:     GPLv2+
@@ -11,7 +11,7 @@
  * Requires Plugins: elementor
  * Text Domain: anwp-post-grid
  * Domain Path: /languages
- * Elementor tested up to: 4.3
+ * Elementor tested up to: 4.4
  */
 
 /**
@@ -41,7 +41,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Oldest premium release that talks to the REST routes registered by this version.
-define( 'ANWP_POST_GRID_MIN_PREMIUM_VERSION', '1.1.0' );
+define( 'ANWP_POST_GRID_MIN_PREMIUM_VERSION', '1.2.0' );
 
 // Check for required PHP version
 if ( version_compare( PHP_VERSION, '7.4', '<' ) ) {

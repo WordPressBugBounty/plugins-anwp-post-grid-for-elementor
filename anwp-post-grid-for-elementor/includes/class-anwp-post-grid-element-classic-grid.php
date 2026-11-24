@@ -679,6 +679,9 @@ class AnWP_Post_Grid_Element_Classic_Grid extends Widget_Base {
 			]
 		);
 
+		anwp_post_grid()->elements->add_dim_on_hover_control( $this );
+		anwp_post_grid()->elements->add_entrance_control( $this );
+
 		$this->end_controls_section();
 
 		/*

@@ -28,7 +28,7 @@ $news_core = AnWP_Post_Grid::parse_changelog( $data['readme'] ?? '', 3 );
 $news_pro  = $is_premium ? AnWP_Post_Grid::parse_changelog( $data['premium_readme'] ?? '', 2 ) : [];
 
 $new_tab     = '<span class="screen-reader-text">' . esc_html__( '(opens in a new tab)', 'anwp-post-grid' ) . '</span>';
-$known_types = [ 'added', 'fixed', 'changed', 'improved', 'note', 'important' ];
+$known_types = [ 'added', 'fixed', 'changed', 'improved', 'note', 'important', 'security' ];
 
 $render_card = function ( $row ) use ( $is_premium ) {
 	?>
@@ -233,7 +233,7 @@ $render_releases = function ( $releases ) use ( $render_changes ) {
 						echo esc_html( sprintf( __( 'Get all %d Premium widgets', 'anwp-post-grid' ), count( $pro_rows ) ) );
 						?>
 					</strong>
-					<?php echo esc_html__( 'Hex Grid, Parallax Grid, News Ticker, Hero Slider and more - plus the header category filter, advanced pagination and custom taxonomies.', 'anwp-post-grid' ); ?>
+					<?php echo esc_html__( 'Slanted Grid, Sliced Grid, Hex Grid, Parallax Grid, News Ticker and more - plus the header category filter, advanced pagination and custom taxonomies.', 'anwp-post-grid' ); ?>
 				</p>
 				<a class="button button-hero pg-welcome__btn-pro" href="<?php echo esc_url( $data['premium_url'] ); ?>" target="_blank" rel="noopener">
 					<?php echo esc_html__( 'Get Premium', 'anwp-post-grid' ); ?><?php echo $new_tab; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
